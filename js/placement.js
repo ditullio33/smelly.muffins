@@ -82,7 +82,7 @@ const PLACEMENT = {
 function placementBank(trackId) {
   if (PLACEMENT[trackId]) return PLACEMENT[trackId];
   const t = TRACK[trackId], refs = t.lessons.filter(l => l.ref && NODE[l.ref]), bank = { 1: [], 2: [], 3: [] };
-  refs.forEach((l, i) => { const tier = 1 + Math.min(2, Math.floor(i / Math.max(1, refs.length / 3)));
+  refs.forEach(l => { const tier = { B: 1, I: 2, A: 3 }[l.lvl] || 1;
     NODE[l.ref].items.filter(x => x.t === 'mc' || x.t === 'tf').forEach(x => bank[tier].push(x.t === 'tf' ? PQ(x.q, ['True', 'False'], x.a ? 0 : 1, x.why) : PQ(x.q, x.opts, x.a, x.why))); });
   return bank;
 }

@@ -1,11 +1,13 @@
 // Personalized learning: levels, Bloom stages, the 13 tracks and the card template. Load after course-index.js.
 //
 // DATA SHAPE (reusable template)
-//   TRACKS[]  → { id, group, emoji, title, desc, color, mentor, check, lessons[] }
-//   lesson    → { id, title, ref?, skip?, cards? }
+//   TRACKS[]  → { id, group, emoji, title, desc, color, mentor, check, tiers: { B: [], I: [], A: [] } }
+//      tiers : a separate lesson list for each level, with different topics. Players only see the list for their level.
+//              t.lessons is filled in automatically with all three lists (each lesson tagged lvl: 'B' | 'I' | 'A').
+//   lesson    → { id, title, ref?, cards? }
 //      ref   : id of an existing 12-unit lesson to reuse (e.g. 'u1l3'); its items get stage tags automatically.
-//      cards : true when LESSON_CARDS[id] holds a level-aware card lesson (see js/content/t-budget-money.js).
-//      skip  : 'i' = tested out for Intermediate and Advanced, 'a' = tested out for Advanced only.
+//      cards : true when LESSON_CARDS[id] holds a level-aware card lesson (see js/content/t-budget-money.js),
+//              or the id of another card set to reuse (e.g. 'bs-money'). Only cards tagged for the lesson's level play.
 //      neither ref nor cards → not written yet; shown on the path as "Coming soon" and never blocks progress.
 //   card      → { stage, levels, t, ... }   built with C(stage, 'BIA', {...})
 //      stage : remember | understand | apply | analyze | evaluate | create (Bloom's taxonomy)
@@ -14,11 +16,12 @@
 
 const LEVELS = {
   beginner:     { emoji: '🌱', name: 'Beginner',     line: "I'm new to this.",                       does: 'Start from zero: vocab and core concepts.' },
-  intermediate: { emoji: '📊', name: 'Intermediate', line: 'I know the basics and want to apply them.', does: 'Skip intro lessons and start with scenarios.' },
-  advanced:     { emoji: '🚀', name: 'Advanced',     line: "I'm comfortable and want a challenge.",    does: 'Case problems, real data, decisions under pressure.' },
+  intermediate: { emoji: '📊', name: 'Intermediate', line: 'I know the basics and want to apply them.', does: 'Different topics: applied lessons and scenarios.' },
+  advanced:     { emoji: '🚀', name: 'Advanced',     line: "I'm comfortable and want a challenge.",    does: 'Different topics: case problems, real data, decisions under pressure.' },
   unsure:       { emoji: '🎯', name: 'Not sure',     line: 'Test me.',                                 does: 'A quick 6-question placement quiz picks your level.' },
 };
 const LEVEL_CODE = { beginner: 'B', intermediate: 'I', advanced: 'A' };
+const CODE_LEVEL = { B: 'beginner', I: 'intermediate', A: 'advanced' };
 
 const STAGES = [
   ['remember', 'Remember', '#2B7A5B'], ['understand', 'Understand', '#2B5FB0'], ['apply', 'Apply', '#7A4FB8'],
@@ -36,61 +39,89 @@ const TRACK_GROUPS = [
   { name: 'Career-Track Finance', mentor: 'senior' },
 ];
 
+// Each track has three separate lesson lists, one per level (B = Beginner, I = Intermediate, A = Advanced).
+// No topic repeats between a track's levels. A card lesson can reuse another lesson's cards with cards: '<card set id>';
+// it then plays the cards tagged for the level it sits in.
 const TRACKS = [
-  { id: 'budget', group: 0, emoji: '💵', title: 'Budgeting & Saving', desc: 'paychecks, emergency funds, spending habits', check: 'a1', lessons: [
-    L('bs-money', 'What is money?', { cards: true }), L('bs-paycheck', 'Reading a paycheck', { cards: true }),
-    L('bs-budget', 'Budgeting 101', { ref: 'u1l3', skip: 'i' }), L('bs-habits', 'Spending habits', { ref: 'u1l2', skip: 'i' }),
-    L('bs-efund', 'Emergency funds', { ref: 'u1l5', skip: 'a' }), L('bs-infl', 'Inflation', { ref: 'u1l4', skip: 'a' }),
-    L('bs-save', 'Saving vs. investing', { ref: 'u1l6' }), L('bs-72', 'Compound interest & the Rule of 72', { ref: 'u2l2' }) ] },
-  { id: 'credit', group: 0, emoji: '💳', title: 'Credit & Debt', desc: 'credit scores, cards, student loans, interest', lessons: [
-    L('cd-what', 'What is credit?'), L('cd-score', 'Credit scores'), L('cd-cards', 'How credit cards work'), L('cd-apr', 'Interest & APR'),
-    L('cd-min', 'Minimum payments trap'), L('cd-student', 'Student loans'), L('cd-payoff', 'Paying off debt (avalanche vs. snowball)') ] },
-  { id: 'purchases', group: 0, emoji: '🏠', title: 'Big Life Purchases', desc: 'renting vs. buying, car loans, mortgages', lessons: [
-    L('bp-rent', 'Renting vs. buying'), L('bp-apt', 'Your first apartment'), L('bp-car', 'Car loans & leasing'), L('bp-mort', 'How mortgages work'),
-    L('bp-down', 'Down payments & closing costs'), L('bp-ins', 'Insurance basics') ] },
-  { id: 'taxes', group: 0, emoji: '🧾', title: 'Taxes 101', desc: 'W-2s, brackets, refunds, Roth vs. traditional', check: 'a8', lessons: [
-    L('tx-why', 'Why we pay taxes'), L('tx-w2', 'W-2s & W-4s'), L('tx-brk', 'Tax brackets'), L('tx-ref', 'Refunds vs. owing'),
-    L('tx-file', 'Filing your first return'), L('tx-roth', 'Roth vs. traditional accounts', { ref: 'u8l2' }), L('tx-cg', 'Capital gains taxes', { ref: 'u8l5' }) ] },
+  { id: 'budget', group: 0, emoji: '💵', title: 'Budgeting & Saving', desc: 'paychecks, emergency funds, spending habits', check: 'a1', tiers: {
+    B: [L('bs-money', 'What is money?', { cards: true }), L('bs-habits', 'Saving vs. spending', { ref: 'u1l2' }), L('bs-budget', 'Budgeting 101', { ref: 'u1l3' }),
+        L('bs-efund', 'Emergency funds', { ref: 'u1l5' })],
+    I: [L('bs-paycheck', 'Reading a paycheck', { cards: true }), L('bs-infl', 'Inflation', { ref: 'u1l4' }), L('bs-save', 'Saving vs. investing', { ref: 'u1l6' }),
+        L('bs-ci', 'Simple vs. compound interest', { ref: 'u2l1' })],
+    A: [L('bs-money-a', 'Case: cash vs. real inflation (2021–2026)', { cards: 'bs-money' }), L('bs-paycheck-a', 'Case: comparing two job offers', { cards: 'bs-paycheck' }),
+        L('bs-72', 'Compound interest & the Rule of 72', { ref: 'u2l2' }), L('bs-early', 'Starting early vs. starting late', { ref: 'u2l3' }),
+        L('bs-goals', 'Saving by age and goals', { ref: 'u7l5' })] } },
+  { id: 'credit', group: 0, emoji: '💳', title: 'Credit & Debt', desc: 'credit scores, cards, student loans, interest', tiers: {
+    B: [L('cd-what', 'What is credit?'), L('cd-score', 'Credit scores'), L('cd-cards', 'How credit cards work'), L('cd-apr', 'Interest & APR')],
+    I: [L('cd-min', 'Minimum payments trap'), L('cd-build', 'Building credit from zero'), L('cd-student', 'Student loans'), L('cd-payoff', 'Paying off debt (avalanche vs. snowball)')],
+    A: [L('cd-stmt', 'Case: reading a real card statement'), L('cd-dti', 'Debt-to-income and loan approval'), L('cd-refi', 'Refinancing & consolidation'),
+        L('cd-first', 'Timed: which debt do you pay first?')] } },
+  { id: 'purchases', group: 0, emoji: '🏠', title: 'Big Life Purchases', desc: 'renting vs. buying, car loans, mortgages', tiers: {
+    B: [L('bp-rent', 'Renting vs. buying'), L('bp-apt', 'Your first apartment'), L('bp-carbud', 'Budgeting for a car'), L('bp-ins', 'Insurance basics')],
+    I: [L('bp-car', 'Car loans & leasing'), L('bp-mort', 'How mortgages work'), L('bp-down', 'Down payments & closing costs'), L('bp-offers', 'Comparing loan offers (rate vs. APR)')],
+    A: [L('bp-tco', 'Case: the 5-year cost of owning a car'), L('bp-amort', 'Amortization & extra payments'), L('bp-arm', 'Fixed vs. adjustable rates'),
+        L('bp-breakeven', 'Rent vs. buy break-even')] } },
+  { id: 'taxes', group: 0, emoji: '🧾', title: 'Taxes 101', desc: 'W-2s, brackets, refunds, Roth vs. traditional', check: 'a8', tiers: {
+    B: [L('tx-why', 'Why we pay taxes'), L('tx-w2', 'W-2s & W-4s'), L('tx-brk', 'Tax brackets'), L('tx-ref', 'Refunds vs. owing')],
+    I: [L('tx-file', 'Filing your first return'), L('tx-roth', 'Roth IRA', { ref: 'u8l2' }), L('tx-trad', 'Traditional IRA', { ref: 'u8l3' }),
+        L('tx-401k', '401(k) and employer match', { ref: 'u8l4' })],
+    A: [L('tx-cg', 'Capital gains taxes', { ref: 'u8l5' }), L('tx-adv', 'Tax-advantaged investing', { ref: 'u8l6' }), L('tx-eff', 'Marginal vs. effective tax rate'),
+        L('tx-tlh', 'Tax-loss harvesting')] } },
 
-  { id: 'stocks', group: 1, emoji: '📈', title: 'Stock Market Basics', desc: "what stocks are, indexes, ETFs, how to place a trade", check: 'a4', lessons: [
-    L('sm-what', 'What is a stock?', { ref: 'u4l1', skip: 'i' }), L('sm-how', 'How the market works', { ref: 'u4l2', skip: 'i' }),
-    L('sm-why', 'Why prices move', { ref: 'u4l3', skip: 'a' }), L('sm-idx', 'Indexes'), L('sm-etf', 'ETFs & index funds', { ref: 'u6l3', skip: 'a' }),
-    L('sm-brk', 'Brokerage accounts', { ref: 'u8l1' }), L('sm-trade', 'How to place a trade'), L('sm-div', 'Dividends', { ref: 'u4l4' }),
-    L('sm-time', 'Why timing the market fails', { ref: 'u9l4' }) ] },
-  { id: 'equity', group: 1, emoji: '🔍', title: 'Equity Research', desc: 'reading financial statements, ratios, valuing a company', check: 'a12', lessons: [
-    L('er-is', 'Income statement', { ref: 'u12l1', skip: 'i' }), L('er-bs', 'Balance sheet', { ref: 'u12l2', skip: 'i' }),
-    L('er-cf', 'Cash flow statement', { ref: 'u12l3', skip: 'a' }), L('er-ratio', 'Key ratios (P/E, margins, ROE)', { ref: 'u12l4', skip: 'a' }),
-    L('er-gv', 'Growth vs. value', { ref: 'u12l5' }), L('er-dcf', 'Intro to valuation & DCF', { ref: 'u12l6' }), L('er-pitch', 'Writing a stock pitch') ] },
-  { id: 'portfolio', group: 1, emoji: '🧺', title: 'Portfolio Building', desc: 'diversification, asset allocation, risk vs. return', check: 'a7', lessons: [
-    L('pb-rr', 'Risk vs. return', { ref: 'u3l2', skip: 'i' }), L('pb-tol', 'Risk tolerance & time horizon', { ref: 'u3l3', skip: 'i' }),
-    L('pb-div', 'Diversification', { ref: 'u7l1', skip: 'a' }), L('pb-aa', 'Asset allocation', { ref: 'u7l2', skip: 'a' }),
-    L('pb-dca', 'Dollar-cost averaging', { ref: 'u7l3' }), L('pb-reb', 'Rebalancing', { ref: 'u7l4' }), L('pb-fees', 'Fees & expense ratios', { ref: 'u6l4' }),
-    L('pb-psy', 'Investor psychology (FOMO, panic selling, herd mentality)', { ref: 'u10l1' }) ] },
-  { id: 'bonds', group: 1, emoji: '🏦', title: 'Bonds & Interest Rates', desc: 'yields, the Fed, how rates move markets', check: 'a5', lessons: [
-    L('bd-what', 'What is a bond?', { ref: 'u5l1', skip: 'i' }), L('bd-yld', 'Yields'), L('bd-rate', 'Interest rates & bond prices', { ref: 'u5l2', skip: 'a' }),
-    L('bd-gov', 'Government vs. corporate bonds', { ref: 'u5l3', skip: 'a' }), L('bd-cr', 'Credit ratings', { ref: 'u5l4' }), L('bd-fed', 'The Fed', { ref: 'u9l5' }),
-    L('bd-mkt', 'How rates move markets') ] },
-  { id: 'alts', group: 1, emoji: '🪙', title: 'Crypto & Alternatives', desc: "crypto, commodities, REITs, what's hype and what's real", check: 'a11', lessons: [
-    L('al-crypto', 'Crypto basics & blockchain', { ref: 'u11l2', skip: 'i' }), L('al-risk', 'Crypto risks & volatility'),
-    L('al-gold', 'Commodities & gold', { ref: 'u11l3', skip: 'a' }), L('al-reit', 'Real estate & REITs', { ref: 'u11l1', skip: 'a' }),
-    L('al-hype', 'Hype vs. real value', { ref: 'u10l2' }), L('al-scam', 'Spotting scams & pump-and-dumps', { ref: 'u10l6' }) ] },
+  { id: 'stocks', group: 1, emoji: '📈', title: 'Stock Market Basics', desc: "what stocks are, indexes, ETFs, how to place a trade", check: 'a4', tiers: {
+    B: [L('sm-what', 'What is a stock?', { ref: 'u4l1' }), L('sm-how', 'How the market works', { ref: 'u4l2' }), L('sm-tick', 'Stock exchanges and tickers', { ref: 'u4l6' }),
+        L('sm-brk', 'Brokerage accounts', { ref: 'u8l1' }), L('sm-trade', 'How to place a trade')],
+    I: [L('sm-why', 'Why prices move', { ref: 'u4l3' }), L('sm-cap', 'Market cap', { ref: 'u4l5' }), L('sm-div', 'Dividends', { ref: 'u4l4' }), L('sm-idx', 'Indexes'),
+        L('sm-etf', 'ETFs & index funds', { ref: 'u6l3' })],
+    A: [L('sm-vol', 'Volatility', { ref: 'u9l2' }), L('sm-crash', 'Market crashes in history', { ref: 'u9l3' }), L('sm-time', 'Why timing the market fails', { ref: 'u9l4' }),
+        L('sm-act', 'Active vs. passive investing', { ref: 'u6l5' }), L('sm-order', 'Order types & bid-ask spreads')] } },
+  { id: 'equity', group: 1, emoji: '🔍', title: 'Equity Research', desc: 'reading financial statements, ratios, valuing a company', check: 'a12', tiers: {
+    B: [L('er-what', 'What equity analysts do'), L('er-is', 'Income statement', { ref: 'u12l1' }), L('er-bs', 'Balance sheet', { ref: 'u12l2' }),
+        L('er-cf', 'Cash flow statement', { ref: 'u12l3' })],
+    I: [L('er-ratio', 'Key ratios: the P/E ratio', { ref: 'u12l4' }), L('er-gv', 'Growth vs. value', { ref: 'u12l5' }), L('er-marg', 'Margins & ROE'),
+        L('er-comp', 'Comparing two companies')],
+    A: [L('er-dcf', 'Intro to valuation & DCF', { ref: 'u12l6' }), L('er-flags', 'Red flags in financial statements'), L('er-pitch', 'Writing a stock pitch')] } },
+  { id: 'portfolio', group: 1, emoji: '🧺', title: 'Portfolio Building', desc: 'diversification, asset allocation, risk vs. return', check: 'a7', tiers: {
+    B: [L('pb-risk', 'What is risk?', { ref: 'u3l1' }), L('pb-rr', 'Risk vs. return', { ref: 'u3l2' }), L('pb-tol', 'Risk tolerance', { ref: 'u3l3' }),
+        L('pb-hor', 'Time horizon', { ref: 'u3l4' }), L('pb-div', 'Diversification', { ref: 'u7l1' })],
+    I: [L('pb-aa', 'Asset allocation', { ref: 'u7l2' }), L('pb-dca', 'Dollar-cost averaging', { ref: 'u7l3' }), L('pb-idx', 'Index funds', { ref: 'u6l2' }),
+        L('pb-fees', 'Fees & expense ratios', { ref: 'u6l4' })],
+    A: [L('pb-reb', 'Rebalancing', { ref: 'u7l4' }), L('pb-psy', 'Emotions and investing', { ref: 'u10l1' }), L('pb-panic', 'Panic selling', { ref: 'u10l3' }),
+        L('pb-over', 'Overconfidence', { ref: 'u10l4' }), L('pb-herd', 'Herd mentality', { ref: 'u10l5' })] } },
+  { id: 'bonds', group: 1, emoji: '🏦', title: 'Bonds & Interest Rates', desc: 'yields, the Fed, how rates move markets', check: 'a5', tiers: {
+    B: [L('bd-what', 'What is a bond?', { ref: 'u5l1' }), L('bd-gov', 'Government vs. corporate bonds', { ref: 'u5l3' }), L('bd-cr', 'Credit ratings', { ref: 'u5l4' })],
+    I: [L('bd-yld', 'Yields'), L('bd-rate', 'Interest rates & bond prices', { ref: 'u5l2' }), L('bd-fed', 'The Fed', { ref: 'u9l5' })],
+    A: [L('bd-econ', 'How the economy affects markets', { ref: 'u9l6' }), L('bd-mkt', 'How rates move markets'), L('bd-dur', 'Duration & interest-rate risk'),
+        L('bd-curve', 'Reading the yield curve')] } },
+  { id: 'alts', group: 1, emoji: '🪙', title: 'Crypto & Alternatives', desc: "crypto, commodities, REITs, what's hype and what's real", check: 'a11', tiers: {
+    B: [L('al-reit', 'Real estate & REITs', { ref: 'u11l1' }), L('al-gold', 'Commodities & gold', { ref: 'u11l3' }), L('al-crypto', 'Crypto basics & blockchain', { ref: 'u11l2' })],
+    I: [L('al-risk', 'Crypto risks & volatility'), L('al-hype', 'Hype vs. real value', { ref: 'u10l2' }), L('al-scam', 'Spotting scams & pump-and-dumps', { ref: 'u10l6' })],
+    A: [L('al-opt', 'Options (intro)', { ref: 'u11l4' }), L('al-fit', 'How alternatives fit a portfolio'), L('al-crash', 'Case: a crypto crash')] } },
 
-  { id: 'wealth', group: 2, emoji: '💼', title: 'Wealth Management', desc: 'financial planning, retirement, client advising', check: 'a3', lessons: [
-    L('wm-what', 'What wealth managers do'), L('wm-plan', 'Financial planning', { ref: 'u7l5', skip: 'a' }), L('wm-ret', 'Retirement planning (401k, IRAs)', { ref: 'u8l4', skip: 'a' }),
-    L('wm-risk', 'Risk profiling clients', { ref: 'u3l3' }), L('wm-cases', 'Client advising scenarios'), L('wm-estate', 'Estate & tax planning basics', { ref: 'u8l6' }) ] },
-  { id: 'pevc', group: 2, emoji: '🏗️', title: 'Private Equity & VC', desc: 'LBOs, fundraising, deal structure, startups', lessons: [
-    L('pe-what', 'What PE and VC firms do'), L('pe-fund', 'How funds raise money'), L('pe-stage', 'Startup funding stages'), L('pe-val', 'Valuing startups'),
-    L('pe-lbo', 'Leveraged buyouts (LBOs)'), L('pe-deal', 'Deal structure'), L('pe-exit', 'Exits') ] },
-  { id: 'ibma', group: 2, emoji: '🤝', title: 'Investment Banking & M&A', desc: 'IPOs, mergers, pitch books', lessons: [
-    L('ib-what', 'What investment bankers do'), L('ib-ipo', 'IPOs'), L('ib-why', 'Why companies merge'), L('ib-proc', 'M&A process'),
-    L('ib-val', 'Valuation methods (comps, precedents, DCF)', { ref: 'u12l6' }), L('ib-pitch', 'Pitch books') ] },
-  { id: 'macro', group: 2, emoji: '🌎', title: 'Macro & Economics', desc: 'inflation, GDP, jobs reports, why markets react', check: 'a9', lessons: [
-    L('mc-gdp', 'GDP', { ref: 'u9l6', skip: 'i' }), L('mc-cpi', 'Inflation & CPI', { ref: 'u1l4', skip: 'i' }), L('mc-jobs', 'Jobs reports'),
-    L('mc-fed', 'The Fed & monetary policy', { ref: 'u9l5', skip: 'a' }), L('mc-cycle', 'Economic cycles'), L('mc-bull', 'Bull vs. bear markets', { ref: 'u9l1' }),
-    L('mc-news', 'Why markets react to news', { ref: 'u4l3' }) ] },
+  { id: 'wealth', group: 2, emoji: '💼', title: 'Wealth Management', desc: 'financial planning, retirement, client advising', check: 'a3', tiers: {
+    B: [L('wm-what', 'What wealth managers do'), L('wm-plan', 'Financial planning by age and goals', { ref: 'u7l5' }), L('wm-ret', 'Retirement planning (401k)', { ref: 'u8l4' })],
+    I: [L('wm-risk', 'Risk profiling clients', { ref: 'u3l3' }), L('wm-ira', 'IRAs for clients (Roth vs. traditional)', { ref: 'u8l3' }), L('wm-fees', 'Advisor and fund fees', { ref: 'u6l4' })],
+    A: [L('wm-cases', 'Client advising scenarios'), L('wm-estate', 'Estate & tax planning basics', { ref: 'u8l6' }), L('wm-calm', 'Coaching clients through a panic', { ref: 'u10l3' }),
+        L('wm-fid', 'Fiduciary duty & ethics')] } },
+  { id: 'pevc', group: 2, emoji: '🏗️', title: 'Private Equity & VC', desc: 'LBOs, fundraising, deal structure, startups', tiers: {
+    B: [L('pe-what', 'What PE and VC firms do'), L('pe-stage', 'Startup funding stages'), L('pe-fund', 'How funds raise money')],
+    I: [L('pe-val', 'Valuing startups'), L('pe-dil', 'Term sheets & dilution'), L('pe-exit', 'Exits')],
+    A: [L('pe-lbo', 'Leveraged buyouts (LBOs)'), L('pe-deal', 'Deal structure'), L('pe-irr', 'Fund returns: IRR vs. multiple'), L('pe-case', 'Case: a simple LBO')] } },
+  { id: 'ibma', group: 2, emoji: '🤝', title: 'Investment Banking & M&A', desc: 'IPOs, mergers, pitch books', tiers: {
+    B: [L('ib-what', 'What investment bankers do'), L('ib-ipo', 'IPOs'), L('ib-why', 'Why companies merge')],
+    I: [L('ib-proc', 'M&A process'), L('ib-val', 'Valuation methods (comps, precedents, DCF)', { ref: 'u12l6' }), L('ib-pitch', 'Pitch books')],
+    A: [L('ib-syn', 'Synergies & deal pricing'), L('ib-acc', 'Accretion / dilution'), L('ib-case', 'Case: advising on a deal')] } },
+  { id: 'macro', group: 2, emoji: '🌎', title: 'Macro & Economics', desc: 'inflation, GDP, jobs reports, why markets react', check: 'a9', tiers: {
+    B: [L('mc-gdp', 'GDP', { ref: 'u9l6' }), L('mc-cpi', 'Inflation & CPI', { ref: 'u1l4' }), L('mc-jobs', 'Jobs reports'), L('mc-bull', 'Bull vs. bear markets', { ref: 'u9l1' })],
+    I: [L('mc-fed', 'The Fed & monetary policy', { ref: 'u9l5' }), L('mc-cycle', 'Economic cycles'), L('mc-news', 'Why markets react to news', { ref: 'u4l3' })],
+    A: [L('mc-crash', 'Market crashes in history', { ref: 'u9l3' }), L('mc-fiscal', 'Fiscal vs. monetary policy'), L('mc-curve', 'Yield curve & recession signals'),
+        L('mc-fomc', 'Reading a Fed statement')] } },
 ];
-TRACKS.forEach((t, i) => { t.mentor = TRACK_GROUPS[t.group].mentor; t.color = ['--u1', '--u2', '--u3', '--u4'][i % 4]; t.unit = { mentor: t.mentor, color: t.color }; });
+TRACKS.forEach((t, i) => { t.mentor = TRACK_GROUPS[t.group].mentor; t.color = ['--u1', '--u2', '--u3', '--u4'][i % 4]; t.unit = { mentor: t.mentor, color: t.color };
+  // t.lessons = every lesson on the track, all levels (each tagged with its level code in lvl).
+  t.lessons = ['B', 'I', 'A'].flatMap(k => t.tiers[k].map(l => Object.assign(l, { lvl: k }))); });
 const TRACK = Object.fromEntries(TRACKS.map(t => [t.id, t]));
+const levelLessons = (t, lvl) => t.tiers[LEVEL_CODE[lvl] || 'B'];
 
 // Stage tags for the 62 original lessons, assigned by rule (marked stageAuto so teammates can review and override).
 function autoStage(it, i, items) {
@@ -106,18 +137,17 @@ function autoStage(it, i, items) {
 UNITS.forEach(u => u.lessons.forEach(l => l.items.forEach((it, i, a) => { if (!it.stage) { it.stage = autoStage(it, i, a); it.stageAuto = true; } })));
 
 // ---- progress helpers ----
-const built = l => !!(l.ref ? NODE[l.ref] : l.cards && LESSON_CARDS[l.id]);
+const cardSet = l => l.cards === true ? l.id : l.cards;
+const built = l => !!(l.ref ? NODE[l.ref] : l.cards && LESSON_CARDS[cardSet(l)]);
 const doneKey = l => l.ref || l.id;
-const testedOut = (l, lvl) => !!l.skip && (lvl === 'advanced' || (l.skip === 'i' && lvl === 'intermediate'));
 function trackLevel(id) { return (S.profile?.tracks.find(t => t.id === id) || {}).level || 'beginner'; }
-// Each lesson's state on a track: done | tested | soon | open | locked. Checkpoint is the last row.
+// Each lesson's state on a track, at the player's level: done | soon | open | locked. Checkpoint is the last row.
 function trackStates(t) {
   const lvl = trackLevel(t.id); let clear = true;
-  const rows = t.lessons.map(l => {
+  const rows = levelLessons(t, lvl).map(l => {
     let st;
     if (!built(l)) st = 'soon';
     else if (S.done[doneKey(l)]) st = 'done';
-    else if (testedOut(l, lvl)) st = 'tested';
     else st = clear || REVIEW_UNLOCK ? 'open' : 'locked';
     if (st === 'open' || st === 'locked') clear = false;
     return { l, st };

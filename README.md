@@ -1,6 +1,6 @@
 # The Bullpen (team Smelly Muffins)
 
-A Duolingo/Brilliant-style course that teaches high school and college students money and investing. New players pick up to 3 of **13 tracks** (Budgeting, Credit, Taxes, Stocks, Equity Research, PE & VC, Macro…), choose a level or take a placement quiz, and get a personalized path. Behind it sits the original **12 units, 62 lessons**, from Money Basics to Analyzing Companies. Each unit ends with an **application**: a 3D desk where market news hits and every decision is graded against what that unit taught. Lessons cite their sources (OpenStax *Principles of Finance 2e*, the Ken French Data Library, IRS, SEC/Investor.gov, FINRA).
+A Duolingo/Brilliant-style course that teaches high school and college students money and investing. New players pick up to 3 of **13 tracks** (Budgeting, Credit, Taxes, Stocks, Equity Research, PE & VC, Macro…), choose a level or take a placement quiz, and get a personalized path. Each level (Beginner, Intermediate, Advanced) has its own set of topics. Behind it sits the original **12 units, 62 lessons**, from Money Basics to Analyzing Companies. Each unit ends with an **application**: a 3D desk where market news hits and every decision is graded against what that unit taught. Lessons cite their sources (OpenStax *Principles of Finance 2e*, the Ken French Data Library, IRS, SEC/Investor.gov, FINRA).
 
 Built for **Redhawk Builds 2026 · Challenge 20** (investing game: risk, diversification, liquidity, fees).
 
@@ -25,7 +25,7 @@ Requires Node 18+ for the test and dev scripts.
 
 | Area | Files | What's in it |
 |---|---|---|
-| Tracks, levels, stages, readings | `js/tracks.js` | The 13 tracks → lessons (reusing unit lessons via `ref`), Bloom stage tags, progress rules, `READINGS` |
+| Tracks, levels, stages, readings | `js/tracks.js` | The 13 tracks → Beginner / Intermediate / Advanced lesson lists (reusing unit lessons via `ref`), Bloom stage tags, progress rules, `READINGS` |
 | Card lessons (3 levels) | `js/content/t-*.js` | `LESSON_CARDS`; the template example is `t-budget-money.js` |
 | Onboarding, plan, settings, library | `js/onboard.js`, `js/focus.js`, `js/placement.js` | Topic picker, level per topic, placement quizzes, "Change focus", settings, Library page |
 | Personalized path + card types | `js/trackpath.js`, `css/tracks.css` | My plan view, lesson runner, calc/slider/sort/plan/timed cards |

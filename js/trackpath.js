@@ -94,8 +94,8 @@ function mountPlan(ui, c, done) {
 
 /* ============================== CARD LESSON RUNNER ============================== */
 function renderTrackLesson(main, t, l) {
-  const lvl = trackLevel(t.id), code = LEVEL_CODE[lvl];
-  const cards = LESSON_CARDS[l.id].filter(c => c.levels.includes(code));
+  const code = l.lvl || LEVEL_CODE[trackLevel(t.id)], lvl = CODE_LEVEL[code];
+  const cards = LESSON_CARDS[cardSet(l)].filter(c => c.levels.includes(code));
   const sh = shell(main, { unit: t.unit, title: l.title }, { hearts: false }); CTX = { screen: 'lesson', lesson: l.title, level: lvl };
   let i = 0, graded = 0, right = 0; const seen = new Set();
   const next = () => {
