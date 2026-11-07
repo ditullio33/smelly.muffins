@@ -65,7 +65,7 @@ function renderRoom(main,node){
   function choicesFor(s){ return s.choicesFn?s.choicesFn(st):s.choices; }
   function taskPanel(name){
     const s=sc[i]; if(s.kind==='pitch') return pitchPanel(s);
-    const chs=choicesFor(s); const order=chs.map((c,k)=>[c,k]);
+    const chs=choicesFor(s); const order=chs.map((c,k)=>[c,k,Math.random()]).sort((a,b)=>a[2]-b[2]); // shuffle so the right call isn't always first
     showPanel(STYLE[name]+(s.phone?' chat':''),`${head(s.from,s.title)}<div class="r-body">${s.body(st)}</div><div class="r-choices">${order.map(([c,k])=>`<button class="choice" data-k="${k}" ${c.disabled?'disabled':''}><span>${esc(c.t)}${c.disabled?` <span class="muted">(${c.why})</span>`:''}</span></button>`).join('')}</div><div id="r-fb"></div>`);
     panel.querySelectorAll('.r-choices .choice').forEach(b=>b.onclick=()=>choose(s,chs[+b.dataset.k],b,chs));
   }
@@ -113,12 +113,12 @@ function renderRoom(main,node){
     showPanel('glass report',`<div class="r-ph"><div><span class="r-from">Shift report · ${m.name}</span><h3>${pass?(nextU?`Unit ${node.unit.n} complete! Next: ${nextU.title}`:'You finished the whole course!'):'Not quite yet'}</h3></div></div>
       <div class="kpis"><div class="kpi"><div class="v">${right}/${total}</div><div class="l">Good decisions (need ${shift.pass})</div></div>${(fin||book)?`<div class="kpi"><div class="v ${fin>=book?'gain':'loss'}">${money(fin)}</div><div class="l">Your ending value</div></div><div class="kpi"><div class="v">${money(book)}</div><div class="l">If you'd made every textbook move</div></div>`:''}</div>
       <ul class="r-report">${results.map(r=>`<li class="${r.ok?'ok':'no'}"><span class="m">${r.ok?'✓':'✗'}</span><div><b>${esc(r.title)}</b><div class="muted">You chose: ${esc(r.pick)}</div><div>${esc(r.fb)}</div>${r.ok?'':`<a class="linkbtn" href="#${r.lesson}">Review: ${NODE[r.lesson].title}</a>`}</div></li>`).join('')}</ul>
-      <div class="row" style="gap:8px;justify-content:flex-end">${pass?'':'<button class="r-btn" id="r-retry">Retry the shift</button>'}<button class="r-go" id="r-done">${pass?'Back to the path':'Back to lessons'}</button></div>`);
-    $('#r-done').onclick=()=>location.hash='home'; $('#r-retry')?.addEventListener('click',()=>render());
+      <div class="row" style="gap:8px;justify-content:flex-end">${pass?'':'<button class="r-btn" id="r-retry">Retry the shift</button>'}<button class="r-go" id="r-done">${pass?(BACK==='course'?'Back to the course':'Back to my plan'):'Back to lessons'}</button></div>`);
+    $('#r-done').onclick=()=>go(BACK); $('#r-retry')?.addEventListener('click',()=>render());
     say(pass?`Shift complete: ${right} of ${total} good calls. ${!(fin||book)?'':fin<book?`The textbook path would have ended at ${money(book)}. See which decisions cost you.`:'You matched the textbook path.'}`:`${right} of ${total}. Review the lessons marked on your report, then retry the shift.`);
     CTX={screen:'shift report',decisions:results.map(r=>({task:r.title,good:r.ok,chose:r.pick})),ending:money(fin),textbook_ending:money(book),passed:pass};
   }
-  $('#r-exit').onclick=()=>{ if(i<0||i>=sc.length){ location.hash='home'; return; } confirmDialog({title:'Leave the desk?',body:'This shift\'s progress will be lost. You can restart it anytime.',stay:'Keep working',leave:'Leave',onLeave:()=>location.hash='home'}); }; $('#r-ask').onclick=openMentor;
+  $('#r-exit').onclick=()=>{ if(i<0||i>=sc.length){ go(BACK); return; } confirmDialog({title:'Leave the desk?',body:'This shift\'s progress will be lost. You can restart it anytime.',stay:'Keep working',leave:'Leave',onLeave:()=>go(BACK)}); }; $('#r-ask').onclick=openMentor;
   $('#r-start').onclick=()=>{ $('#r-intro').remove(); next(); };
   wrap.addEventListener('keydown',e=>{ if(e.key==='Escape'&&panelOpen&&!document.querySelector('.dlg-scrim')) sitBack(); });
   refresh(); say(shift.intro);

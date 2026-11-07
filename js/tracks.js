@@ -140,6 +140,7 @@ UNITS.forEach(u => u.lessons.forEach(l => l.items.forEach((it, i, a) => { if (!i
 const cardSet = l => l.cards === true ? l.id : l.cards;
 const built = l => !!(l.ref ? NODE[l.ref] : l.cards && LESSON_CARDS[cardSet(l)]);
 const doneKey = l => l.ref || l.id;
+const hasLessons = t => t.lessons.some(built); // tracks with no built lessons are shown as 'Coming soon' and can't be picked
 function trackLevel(id) { return (S.profile?.tracks.find(t => t.id === id) || {}).level || 'beginner'; }
 // Each lesson's state on a track, at the player's level: done | soon | open | locked. Checkpoint is the last row.
 function trackStates(t) {

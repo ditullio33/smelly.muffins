@@ -38,10 +38,10 @@ function openFocusPicker() {
     TRACK_GROUPS.forEach((g, gi) => {
       const sec = h(`<section class="topic-group"><h3>${g.name}</h3><div class="topic-grid"></div></section>`);
       TRACKS.filter(t => t.group === gi).forEach(t => { const on = draft.some(p => p.id === t.id);
-        const c = h(`<button class="topic ${on ? "on" : ""}" style="--uc:var(${t.color})" role="checkbox" aria-checked="${on}" ${!on && draft.length >= MAX_PICKS ? 'disabled' : ''}><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span></span><span class="t-tick" aria-hidden="true">${I.check}</span></button>`);
+        const c = h(`<button class="topic ${on ? "on" : ""}" style="--uc:var(${t.color})" role="checkbox" aria-checked="${on}" ${(!on && draft.length >= MAX_PICKS) || (!on && !hasLessons(t)) ? 'disabled' : ''}><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span>${hasLessons(t) ? '' : '<span class="tag soon">Coming soon</span>'}</span><span class="t-tick" aria-hidden="true">${I.check}</span></button>`);
         c.onclick = () => { const i = draft.findIndex(p => p.id === t.id);
           if (i >= 0) { if (draft.length > 1) draft.splice(i, 1); }
-          else if (draft.length < MAX_PICKS) { const old = S.profile.tracks.find(p => p.id === t.id); draft.push(old ? { ...old } : { id: t.id, level: 'beginner', placed: null }); }
+          else if (draft.length < MAX_PICKS && hasLessons(t)) { const old = S.profile.tracks.find(p => p.id === t.id); draft.push(old ? { ...old } : { id: t.id, level: 'beginner', placed: null }); }
           const y = body.scrollTop; draw(); body.scrollTop = y; };
         sec.querySelector('.topic-grid').append(c); });
       body.append(sec); });

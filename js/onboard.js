@@ -31,13 +31,13 @@ function obTopics(main, ui) {
   const msg = h(`<p class="pick-msg" role="status" aria-live="polite"></p>`);
   const go = h(`<button class="btn go big" style="margin-left:auto">Continue</button>`);
   const cards = [];
-  const sync = () => { const n = OB.picks.length; cards.forEach(c => { const on = OB.picks.includes(c.dataset.id); c.classList.toggle('on', on); c.setAttribute('aria-checked', on); c.disabled = !on && n >= MAX_PICKS; });
+  const sync = () => { const n = OB.picks.length; cards.forEach(c => { const on = OB.picks.includes(c.dataset.id); c.classList.toggle('on', on); c.setAttribute('aria-checked', on); c.disabled = !hasLessons(TRACK[c.dataset.id]) || (!on && n >= MAX_PICKS); });
     msg.textContent = n >= MAX_PICKS ? "That's 3. Tap one to swap it out." : n ? `${n} of 3 picked` : ''; go.disabled = !n; };
   TRACK_GROUPS.forEach((g, gi) => {
     const sec = h(`<section class="topic-group"><h3>${g.name}</h3><div class="topic-grid" role="group" aria-label="${g.name}"></div></section>`);
     TRACKS.filter(t => t.group === gi).forEach(t => {
-      const c = h(`<button class="topic" role="checkbox" aria-checked="false" data-id="${t.id}"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span></span><span class="t-tick" aria-hidden="true">${I.check}</span></button>`);
-      c.onclick = () => { const i = OB.picks.indexOf(t.id); if (i >= 0) OB.picks.splice(i, 1); else if (OB.picks.length < MAX_PICKS) OB.picks.push(t.id); sync(); };
+      const c = h(`<button class="topic" role="checkbox" aria-checked="false" data-id="${t.id}"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span>${hasLessons(t) ? '' : '<span class="tag soon">Coming soon</span>'}</span><span class="t-tick" aria-hidden="true">${I.check}</span></button>`);
+      c.onclick = () => { if (!hasLessons(t)) return; const i = OB.picks.indexOf(t.id); if (i >= 0) OB.picks.splice(i, 1); else if (OB.picks.length < MAX_PICKS) OB.picks.push(t.id); sync(); };
       cards.push(c); sec.querySelector('.topic-grid').append(c); });
     ui.body.append(sec); });
   ui.fin.append(msg, go); sync();
@@ -111,7 +111,7 @@ function renderSettings(main) {
   const addBox = h(`<section class="stack" style="gap:10px"></section>`);
   const drawAdd = () => { addBox.innerHTML = '<h3>Add a track</h3>';
     const finished = S.profile.tracks.some(p => trackStates(TRACK[p.id]).complete);
-    const left = TRACKS.filter(t => !S.profile.tracks.some(p => p.id === t.id));
+    const left = TRACKS.filter(t => hasLessons(t) && !S.profile.tracks.some(p => p.id === t.id));
     if (!finished) { addBox.append(h(`<p class="muted">Finish one of your tracks to add another. Want different topics now? Use <b>Change focus</b> below to swap one.</p>`)); return; }
     const g = h(`<div class="topic-grid"></div>`);
     left.forEach(t => { const c = h(`<button class="topic"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span></span></button>`);
