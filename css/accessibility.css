@@ -1,0 +1,45 @@
+/* Contrast, touch-target, feedback and reduced-motion overrides. Load last. */
+/* ================= UI/UX pass: contrast, touch targets, feedback, motion ================= */
+:root{ --xp:#946000; --fire:#B4530F; --gain-btn:#187A55; --loss-btn:#B8323A; --on-uc:#FFFFFF; }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }}
+:root[data-theme="dark"]{ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }
+body{font-size:16px}
+button,[role="button"],a{touch-action:manipulation}
+.stat.xp{color:var(--xp)} .stat.fire{color:var(--fire)}
+.l-foot.good .btn.go{background:var(--gain-btn);border-color:color-mix(in srgb,var(--gain-btn) 62%,#000)}
+.l-foot.bad .btn.go{background:var(--loss-btn);border-color:color-mix(in srgb,var(--loss-btn) 62%,#000)}
+/* touch targets: 44px for primary controls, 40px for secondary chips */
+.btn{min-height:44px} .btn.sm{min-height:40px}
+.x{min-width:44px;min-height:44px}
+.chip{min-height:40px;display:inline-flex;align-items:center}
+.bank .chip,.blank .chip{min-height:48px}
+.m-tools .chip{min-height:36px}
+.choice{min-height:52px}
+.r-dk{min-height:44px}
+.r-close{min-width:44px;min-height:44px}
+.r-btn{min-height:44px}
+.linkbtn{min-height:40px}
+input[type=range]{min-height:32px}
+.rung{min-height:36px}
+/* press feedback without layout shift (transform only) */
+.choice:active:not([disabled]){transform:translateY(2px)}
+.btn:active:not([disabled]){transform:translateY(2px)}
+.chip:active{transform:translateY(1px)}
+/* correctness shown by icon + text, not color alone */
+.choice.right::after,.choice.wrong::after{margin-left:auto;font-family:var(--f-mono);font-weight:700;font-size:18px;padding-left:10px}
+.choice.right::after{content:"✓";color:var(--gain)}
+.choice.wrong::after{content:"✗";color:var(--loss)}
+.match .choice.gone::after{content:none}
+/* small text floor */
+.msg .src{font-size:11px}
+.r-sub{font-size:13px}
+.r-k{font-size:11px}
+/* confirm dialog */
+.dlg-scrim{position:fixed;inset:0;z-index:80;background:rgba(10,14,18,.55);display:grid;place-items:center;padding:16px;animation:fadein .15s ease-out}
+.dlg{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.dlg h3{font-size:22px}
+.dlg .row{justify-content:flex-end}
+@keyframes fadein{from{opacity:0}}
+.skip{position:absolute;left:16px;top:-60px;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:8px;z-index:90;font-weight:700}
+.skip:focus{top:12px}
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important} }
