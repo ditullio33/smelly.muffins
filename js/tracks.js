@@ -135,3 +135,40 @@ function pathAllows(id) {
 }
 function recordStage(stage, ok) { if (!stage || ok === null || ok === undefined) return; S.stages = S.stages || {}; const s = S.stages[stage] || (S.stages[stage] = { n: 0, c: 0 }); s.n++; if (ok) s.c++; }
 function stageChip(stage, auto) { const s = STAGE[stage]; if (!s) return ''; return `<span class="stage-chip" style="--sc:${s.color}" title="${auto ? 'Stage assigned automatically' : 'Learning stage'}">Stage ${s.n} · ${s.name}</span>`; }
+
+// ---- Readings: free, openly licensed or public-domain sources for each track (links open in a new tab) ----
+const BOOKS = {
+  pof:   { title: 'Principles of Finance 2e', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-finance-2e', kind: 'Free textbook (PDF)', lic: 'CC BY-NC-SA 4.0' },
+  pf:    { title: 'Personal Finance', by: 'Rachel Siegel & Carol Yacht', url: 'https://open.umn.edu/opentextbooks/textbooks/31', kind: 'Free textbook', lic: 'CC BY-NC-SA' },
+  acct:  { title: 'Principles of Accounting, Vol. 1: Financial Accounting', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-financial-accounting', kind: 'Free textbook (PDF)', lic: 'CC BY-NC-SA 4.0' },
+  ent:   { title: 'Entrepreneurship', by: 'OpenStax', url: 'https://openstax.org/details/books/entrepreneurship', kind: 'Free textbook (PDF)', lic: 'CC BY 4.0' },
+  macro: { title: 'Principles of Macroeconomics 3e', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-macroeconomics-3e', kind: 'Free textbook (PDF)', lic: 'CC BY 4.0' },
+  ymyg:  { title: 'Your Money, Your Goals toolkit', by: 'Consumer Financial Protection Bureau', url: 'https://files.consumerfinance.gov/f/documents/cfpb_ymyg_a-financial-empowerment-toolkit_large-print.pdf', kind: 'PDF', lic: 'U.S. government work' },
+  fdic:  { title: 'Money Smart for Young Adults', by: 'FDIC', url: 'https://www.fdic.gov/resources/consumers/money-smart/teach-money-smart/money-smart-for-young-adults.html', kind: 'Lessons + PDFs', lic: 'U.S. government work' },
+  home:  { title: 'Your Home Loan Toolkit', by: 'Consumer Financial Protection Bureau', url: 'https://pueblo.gpo.gov/CFPBPubs/pdfs/CFPBWEB187.pdf', kind: 'PDF (2015)', lic: 'U.S. government work' },
+  p17:   { title: 'Publication 17: Your Federal Income Tax (2025 returns)', by: 'IRS', url: 'https://www.irs.gov/pub/irs-pdf/p17.pdf', kind: 'PDF', lic: 'U.S. government work' },
+  road:  { title: 'A Roadmap to Your Financial Security Through Saving and Investing', by: 'U.S. SEC', url: 'https://www.sec.gov/investor/pubs/sec-guide-to-savings-and-investing.pdf', kind: 'PDF (2011)', lic: 'U.S. government work' },
+  fedpf: { title: 'The Fed: Purposes & Functions', by: 'Federal Reserve Board', url: 'https://www.federalreserve.gov/pf/pf.htm', kind: 'Web book', lic: 'U.S. government work' },
+  fedex: { title: 'The Fed Explained', by: 'Federal Reserve Bank of Atlanta', url: 'https://www.atlantafed.org/about/fed-explained', kind: 'Web', lic: 'Public education resource' },
+  seccr: { title: 'Exercise Caution with Crypto Asset Securities', by: 'U.S. SEC investor alert', url: 'https://sec.gov/oiea/investor-alerts-and-bulletins/exercise-caution-crypto-asset-securities-investor-alert', kind: 'Web', lic: 'U.S. government work' },
+  cftc:  { title: 'Digital Assets', by: 'CFTC', url: 'https://cftc.gov/bitcoin', kind: 'Web', lic: 'U.S. government work' },
+};
+const R = (b, part) => ({ ...BOOKS[b], key: b, part });
+const READINGS = {
+  budget:    [R('pf', 'Ch. 1–5: planning, budgets, time value'), R('ymyg', 'Goals, cash flow, saving'), R('fdic', 'Young-adult money basics')],
+  credit:    [R('pf', 'Ch. 7: financial management and credit'), R('ymyg', 'Credit reports, scores and debt')],
+  purchases: [R('pf', 'Ch. 8–10: consumer strategies, buying a home, insurance'), R('home', 'Mortgages, down payments, closing')],
+  taxes:     [R('p17', 'Filing, income, deductions, credits, IRAs'), R('pf', 'Ch. 6: taxes and tax planning')],
+  stocks:    [R('road', 'Stocks, funds, brokers, fees'), R('pof', 'Stock markets and stock valuation'), R('pf', 'Ch. 15: owning stocks')],
+  equity:    [R('pof', 'Financial statements, ratios, valuation'), R('acct', 'Reading the three statements')],
+  portfolio: [R('road', 'Diversification, allocation, fees'), R('pf', 'Ch. 12–14: investing and behavioral finance'), R('pof', 'Risk and return')],
+  bonds:     [R('pof', 'Bonds and bond valuation'), R('pf', 'Ch. 16: owning bonds'), R('fedpf', 'Monetary policy and interest rates')],
+  alts:      [R('pf', 'Ch. 17: commodities, real estate, collectibles'), R('seccr', 'Crypto risks'), R('cftc', 'Digital asset advisories')],
+  wealth:    [R('pf', 'Ch. 1 and 11: planning, retirement, estates'), R('p17', 'IRA rules')],
+  pevc:      [R('ent', 'Funding a startup: angels, VC, stages'), R('pof', 'Valuation basics')],
+  ibma:      [R('pof', 'Valuation methods'), R('ent', 'Raising capital')],
+  macro:     [R('macro', 'GDP, inflation, unemployment, cycles'), R('fedpf', 'How the Fed works'), R('fedex', 'The Fed in plain English')],
+};
+function readingList(trackId) {
+  return `<div class="readings"><h4>📚 Read more</h4><ul>${(READINGS[trackId] || []).map(r => `<li><a href="${r.url}" target="_blank" rel="noopener">${esc(r.title)}</a> <span class="muted">· ${esc(r.by)} · ${esc(r.part)}</span></li>`).join('')}</ul></div>`;
+}

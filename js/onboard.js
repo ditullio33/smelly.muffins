@@ -80,7 +80,7 @@ function planCard(t) {
   const p = S.profile.tracks.find(x => x.id === t.id);
   return `<div class="plan-card" style="--uc:var(${t.color})"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><div style="min-width:0"><b>${t.title}</b>
     <div class="lvl-pill">${lv.emoji} ${lv.name}${p?.placed ? ` · placed by quiz (${p.placed.right}/${p.placed.n})` : ''}</div>
-    <ul class="plan-facts"><li>${first ? `Starts with: <b>${esc(first)}</b>` : s.complete ? '<b>All done!</b>' : 'Lessons for this track are <b>coming soon</b>. They will use the same card template.'}</li>${tested ? `<li>${tested} intro lesson${tested > 1 ? 's' : ''} tested out (you can still open them)</li>` : ''}<li>${t.lessons.length} lessons${soon ? ` (${soon} coming soon)` : ''}${t.check ? ` · checkpoint: <b>${esc(NODE[t.check].title)}</b>` : ''}</li></ul></div></div>`;
+    <ul class="plan-facts"><li>${first ? `Starts with: <b>${esc(first)}</b>` : s.complete ? '<b>All done!</b>' : 'Lessons for this track are <b>coming soon</b>. They will use the same card template.'}</li>${tested ? `<li>${tested} intro lesson${tested > 1 ? 's' : ''} tested out (you can still open them)</li>` : ''}<li>${t.lessons.length} lessons${soon ? ` (${soon} coming soon)` : ''}${t.check ? ` · checkpoint: <b>${esc(NODE[t.check].title)}</b>` : ''}</li><li>Readings: ${(READINGS[t.id] || []).map(r => esc(r.title)).join(' · ')}</li></ul></div></div>`;
 }
 function obPlan(main, ui) {
   ui.body.append(h(`<div class="ob-head"><span class="hero-bull sm">${BULL_LOGO}</span><div><h2 class="l-q" style="margin:0">Here's your plan</h2><p class="muted">Lessons are 5–10 minutes, one idea per screen.</p></div></div>`));
@@ -126,4 +126,15 @@ function renderSettings(main) {
   again.querySelector('button').onclick = openFocusPicker;
   wrap.append(again); main.append(wrap);
   mentorTools(['Which level should I pick?', 'What does tested out mean?']);
+}
+
+/* ============================== LIBRARY ============================== */
+function renderLibrary(main) {
+  document.body.classList.remove('focus'); statsBar(); CTX = { screen: 'library of readings' };
+  const mine = (S.profile?.tracks || []).map(p => p.id);
+  const order = [...TRACKS].sort((a, b) => (mine.includes(b.id) - mine.includes(a.id)));
+  const wrap = h(`<div class="stack" style="gap:16px;max-width:860px;margin:0 auto"><div><span class="eyebrow">Library</span><h2 style="margin-top:4px">Free readings for every track</h2><p class="muted">Open textbooks and official guides behind our lessons. All free; links open in a new tab.</p></div></div>`);
+  order.forEach(t => wrap.append(h(`<section class="lib-sec" style="--uc:var(${t.color})"><h3><span aria-hidden="true">${t.emoji}</span> ${t.title}${mine.includes(t.id) ? ' <span class="tag">In your plan</span>' : ''}</h3>${readingList(t.id)}</section>`)));
+  wrap.append(h(`<section class="stack" style="gap:8px"><h3>All sources and licenses</h3><ul class="lib-all">${Object.values(BOOKS).map(b => `<li><a href="${b.url}" target="_blank" rel="noopener">${esc(b.title)}</a> <span class="muted">· ${esc(b.by)} · ${esc(b.kind)} · ${esc(b.lic)}</span></li>`).join('')}</ul></section>`));
+  main.append(wrap);
 }

@@ -152,6 +152,7 @@ function renderMyPath(main) {
           if (r.st === 'locked') return toast('Finish the lesson before this one to unlock it.');
           location.hash = lessonHref(r.l).slice(1); };
         path.append(w); });
+      path.append(h(readingList(t.id)));
       return path; };
     sec.append(head); if (isOpen()) sec.append(buildPath()); wrap.append(sec);
   });
@@ -159,7 +160,7 @@ function renderMyPath(main) {
     const add = h(`<div class="callout row" style="justify-content:space-between"><span>You finished a track. Ready for another?</span><a class="btn sm" href="#settings">Add a track</a></div>`); wrap.append(add); }
   const lab = h(`<div class="lab-cta"><div><span class="eyebrow" style="color:var(--hl)">Practice anytime</span><h3 style="margin-top:4px;color:var(--tape-fg)">Scenario Lab: what happens when the Fed hikes rates, or before a midterm election?</h3></div><button class="btn">Open the lab</button></div>`);
   lab.querySelector('button').onclick = () => location.hash = 'lab'; wrap.append(lab);
-  wrap.append(h(`<p class="muted" style="font-size:13px;text-align:center">Want everything? <a href="#course">Browse all 12 units</a>.</p>`));
+  wrap.append(h(`<p class="muted" style="font-size:13px;text-align:center">Want everything? <a href="#course">Browse all 12 units</a> or open the <a href="#library">Library</a> of free readings.</p>`));
   main.append(wrap);
   if (!chat.length) say(`Hey, I'm ${MENTORS[curT.mentor].name.split(' ')[0]}. Your plan starts with ${curT.title}. One lesson at a time, and ask me anything.`);
   mentorTools(['What is compound interest?', 'How do credit scores work?', 'What is an index fund?']);
