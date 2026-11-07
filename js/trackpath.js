@@ -117,12 +117,14 @@ function lessonHref(l) { return l.check || l.ref ? '#' + (l.check ? l.id : l.ref
 function renderMyPath(main) {
   document.body.classList.remove('focus'); statsBar();
   const picks = S.profile.tracks.map(p => TRACK[p.id]).filter(Boolean);
+  const fid = focusTrack(); if (fid) picks.sort((a, b) => (b.id === fid) - (a.id === fid));
   const states = Object.fromEntries(picks.map(t => [t.id, trackStates(t)]));
-  const curT = picks.find(t => !states[t.id].complete) || picks[0];
+  const curT = TRACK[focusTrack()] || picks.find(t => !states[t.id].complete) || picks[0];
   if (!Array.isArray(S.openT)) S.openT = [curT.id];
   setMentor(curT.mentor); CTX = { screen: 'my learning path', tracks: picks.map(t => `${t.title} (${trackLevel(t.id)})`).join(', ') };
   const wrap = h(`<div class="stack" style="gap:14px"></div>`);
   wrap.append(h(`<div class="course-head"><div class="row" style="gap:16px;flex-wrap:nowrap"><span class="hero-bull">${BULL_LOGO}</span><div><span class="eyebrow">Your plan</span><h2 style="margin-top:4px">One track at a time</h2></div></div><a class="btn ghost sm" href="#settings">Edit plan</a></div>`));
+  wrap.append(focusBar(picks, curT));
   picks.forEach((t, ti) => {
     const s = states[t.id], lv = LEVELS[s.lvl]; const sec = h(`<section class="track-sec" style="--uc:var(${t.color})"></section>`);
     const isOpen = () => S.openT.includes(t.id);

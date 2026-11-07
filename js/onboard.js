@@ -10,7 +10,7 @@ function obFrame(main, steps, at) {
     <div class="l-body" id="lb"></div><div class="l-foot" id="lf"><div class="foot-in" id="lfi"></div></div></div>`);
   main.append(el);
   const ui = { el, body: el.querySelector('#lb'), foot: el.querySelector('#lf'), fin: el.querySelector('#lfi'), footReset() { this.foot.className = 'l-foot'; this.fin.innerHTML = ''; } };
-  el.querySelector('#ob-back').onclick = () => { if (OB.single) { OB = null; location.hash = 'settings'; return; } OB.step = Math.max(0, OB.step - 1); renderOnboard(main); };
+  el.querySelector('#ob-back').onclick = () => { if (OB.single) { const back = OB.returnTo || 'settings'; OB = null; go(back); return; } OB.step = Math.max(0, OB.step - 1); renderOnboard(main); };
   return ui;
 }
 function startOnboarding(prefill) { OB = { picks: prefill ? prefill.map(p => p.id) : [], levels: Object.fromEntries((prefill || []).map(p => [p.id, p.level])), placed: {}, step: 0 }; }
@@ -63,7 +63,8 @@ function obLevel(main, ui, t) {
   };
 }
 function advance(main) {
-  if (OB.single) { saveProfile(); OB = null; location.hash = 'settings'; return; }
+  if (OB.single && OB.step < OB.picks.length) { OB.step++; return renderOnboard(main); }
+  if (OB.single) { const back = OB.returnTo || 'settings'; saveProfile(); OB = null; go(back); return; }
   OB.step++; if (OB.step > OB.picks.length) saveProfile(); renderOnboard(main);
 }
 function saveProfile() {
@@ -111,7 +112,7 @@ function renderSettings(main) {
   const drawAdd = () => { addBox.innerHTML = '<h3>Add a track</h3>';
     const finished = S.profile.tracks.some(p => trackStates(TRACK[p.id]).complete);
     const left = TRACKS.filter(t => !S.profile.tracks.some(p => p.id === t.id));
-    if (!finished) { addBox.append(h(`<p class="muted">Finish one of your tracks to add another. Want different topics now? Use <b>Change topics</b> below.</p>`)); return; }
+    if (!finished) { addBox.append(h(`<p class="muted">Finish one of your tracks to add another. Want different topics now? Use <b>Change focus</b> below to swap one.</p>`)); return; }
     const g = h(`<div class="topic-grid"></div>`);
     left.forEach(t => { const c = h(`<button class="topic"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><span><b>${t.title}</b><span class="muted">${t.desc}</span></span></button>`);
       c.onclick = () => { S.profile.tracks.push({ id: t.id, level: 'beginner', placed: null }); save(); OB = { picks: [t.id], levels: {}, placed: {}, step: 1, single: true }; location.hash = 'onboard'; }; g.append(c); });
@@ -121,8 +122,8 @@ function renderSettings(main) {
   const st = S.stages || {};
   wrap.append(h(`<section class="stack" style="gap:10px"><h3>Your skills by stage</h3><div class="stage-bars">${STAGES.map(([k, n, c]) => { const v = st[k] || { n: 0, c: 0 }, p = v.n ? Math.round(100 * v.c / v.n) : 0;
     return `<div class="sb" style="--sc:${c}"><span>${STAGE[k].n}. ${n}</span><span class="sbar"><span style="width:${p}%"></span></span><span class="mono">${v.n ? p + '%' : '–'}</span></div>`; }).join('')}</div><p class="muted" style="font-size:13px">Percent right on questions at each stage, across every lesson you've taken.</p></section>`));
-  const again = h(`<div class="row" style="gap:10px"><button class="btn ghost">Change topics</button><a class="btn ghost" href="#home">Back to my path</a></div>`);
-  again.querySelector('button').onclick = () => { startOnboarding(S.profile.tracks); location.hash = 'onboard'; };
+  const again = h(`<div class="row" style="gap:10px"><button class="btn ghost">Change focus</button><a class="btn ghost" href="#home">Back to my path</a></div>`);
+  again.querySelector('button').onclick = openFocusPicker;
   wrap.append(again); main.append(wrap);
   mentorTools(['Which level should I pick?', 'What does tested out mean?']);
 }

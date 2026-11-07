@@ -122,3 +122,24 @@ body.onboarding .m-fab{display:none}
 .track-head .unit-bar{display:block}
 @media (max-width:480px){.track-head{padding:14px;gap:10px}.track-head .t-emoji{width:44px;height:44px;font-size:24px;border-radius:12px}.track-head h2{font-size:22px}}
 .ob-top #ob-back[hidden]{display:block!important;visibility:hidden}
+/* ---------- focus bar + picker ---------- */
+.focus-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.focus-pills{display:flex;gap:8px;flex-wrap:wrap}
+.f-pill{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:15px;font-weight:700;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.f-pill:hover{background:var(--surface-2)}
+.f-pill.on{border-color:var(--uc);background:color-mix(in srgb,var(--uc) 12%,var(--surface))}
+.f-pill .lv{font-size:13px}
+.f-pill.add{border-style:dashed;border-bottom-width:2px;color:var(--muted)}
+.dlg.focus-dlg{width:min(860px,100%);max-height:min(88vh,900px);padding:0;gap:0;overflow:hidden}
+.focus-dlg > .row{padding:18px 20px 12px;border-bottom:1px solid var(--line)}
+.fp-body{overflow-y:auto;padding:14px 20px;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain}
+.fp-body h4{margin:0 0 8px;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--line);background:var(--surface)}
+.fp-row{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center;border:2px solid var(--line);border-left:6px solid var(--uc);border-radius:12px;padding:10px 12px}
+.fp-row .seg,.fp-row > .row{grid-column:1/-1}
+.fp-row .seg button{font-size:13px;padding:6px 10px}
+@media (max-width:560px){.dlg-scrim:has(.focus-dlg){padding:0;align-items:end}.dlg.focus-dlg{border-radius:16px 16px 0 0;max-height:92vh}}
+.focus-dlg .topic-group h3{font-size:13px;margin:16px 0 8px}
+.fp-row .seg{justify-self:start}
+.fp-row > .row{justify-content:flex-end}
+body:has(.dlg-scrim) .m-teaser,body:has(.dlg-scrim) .m-fab{display:none}
