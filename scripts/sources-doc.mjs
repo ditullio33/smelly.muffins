@@ -17,7 +17,9 @@ for (const u of UNITS) {
 // Track card lessons (js/content/t-*.js) and track readings (READINGS in js/tracks.js)
 const TRACKS = vm.runInContext('TRACKS', ctx), CARDS = vm.runInContext('LESSON_CARDS', ctx), READINGS = vm.runInContext('READINGS', ctx);
 md += `## Track card lessons\n\n| Track | Lesson | Sources |\n|---|---|---|\n`;
-for (const t of TRACKS) for (const l of t.lessons) if (l.cards && CARDS[l.id]) md += `| ${t.title} | ${l.title} | ${[...new Set(CARDS[l.id].map(c => c.src).filter(Boolean))].join('<br>')} |\n`;
+// A lesson can reuse another card set (cards: '<id>'); list only the cards that play at that lesson's level.
+for (const t of TRACKS) for (const l of t.lessons) { const set = CARDS[l.cards === true ? l.id : l.cards]; if (!l.cards || !set) continue;
+  md += `| ${t.title} | ${l.title} | ${[...new Set(set.filter(c => !l.lvl || c.levels.includes(l.lvl)).map(c => c.src).filter(Boolean))].join('<br>')} |\n`; }
 md += `\n## Track readings\n\n`;
 for (const t of TRACKS) { const r = READINGS[t.id] || []; if (!r.length) continue; md += `**${t.title}**\n`; for (const x of r) md += `- [${x.title}](${x.url}) · ${x.by} · ${x.part}\n`; md += `\n`; }
 writeFileSync(new URL('docs/sources.md', root), md);

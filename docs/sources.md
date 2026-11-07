@@ -134,8 +134,10 @@ Primary sources:
 
 | Track | Lesson | Sources |
 |---|---|---|
-| Budgeting & Saving | What is money? | OpenStax, Principles of Finance 2e, Ch. 3 (CC BY-NC-SA 4.0)<br>U.S. Bureau of Labor Statistics, Consumer Price Index<br>FDIC.gov<br>BLS CPI-U, U.S. city average (FRED series CUUS0000SA0, first-half averages: 2021 = 266.2, 2026 = 330.7)<br>Ken French Data Library, US market returns since 1926; BLS CPI-U, U.S. city average (FRED series CUUS0000SA0, first-half averages: 2021 = 266.2, 2026 = 330.7) |
-| Budgeting & Saving | Reading a paycheck | Personal Finance (Saylor Foundation edition), Ch. 6 (CC BY-NC-SA 3.0)<br>U.S. Department of Labor (EBSA), Savings Fitness: A Guide to Your Money and Your Financial Future<br>IRS Tax Topic 751: Social Security and Medicare withholding rates (6.2% and 1.45%)<br>Personal Finance (Saylor Foundation edition), Ch. 11 (CC BY-NC-SA 3.0)<br>Bolton, Personal Financial Planning for College Students (University of Louisiana at Lafayette), Ch. 5 (free to copy and share)<br>IRS Publication 15 (Circular E), Employer's Tax Guide |
+| Budgeting & Saving | What is money? | OpenStax, Principles of Finance 2e, Ch. 3 (CC BY-NC-SA 4.0)<br>U.S. Bureau of Labor Statistics, Consumer Price Index<br>FDIC.gov |
+| Budgeting & Saving | Reading a paycheck | IRS Tax Topic 751: Social Security and Medicare withholding rates (6.2% and 1.45%)<br>Personal Finance (Saylor Foundation edition), Ch. 6 (CC BY-NC-SA 3.0)<br>U.S. Department of Labor (EBSA), Savings Fitness: A Guide to Your Money and Your Financial Future<br>Bolton, Personal Financial Planning for College Students (University of Louisiana at Lafayette), Ch. 5 (free to copy and share) |
+| Budgeting & Saving | Case: cash vs. real inflation (2021–2026) | BLS CPI-U, U.S. city average (FRED series CUUS0000SA0, first-half averages: 2021 = 266.2, 2026 = 330.7)<br>Ken French Data Library, US market returns since 1926; BLS CPI-U, U.S. city average (FRED series CUUS0000SA0, first-half averages: 2021 = 266.2, 2026 = 330.7)<br>OpenStax, Principles of Finance 2e, Ch. 3 (CC BY-NC-SA 4.0)<br>U.S. Bureau of Labor Statistics, Consumer Price Index |
+| Budgeting & Saving | Case: comparing two job offers | Bolton, Personal Financial Planning for College Students (University of Louisiana at Lafayette), Ch. 5 (free to copy and share)<br>IRS Publication 15 (Circular E), Employer's Tax Guide |
 
 ## Track readings
 

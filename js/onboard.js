@@ -76,11 +76,11 @@ function saveProfile() {
 
 function planCard(t) {
   const s = trackStates(t), lv = LEVELS[s.lvl], first = s.current?.l.title;
-  const tested = s.rows.filter(r => r.st === 'tested').length, soon = s.rows.filter(r => r.st === 'soon').length;
+  const soon = s.rows.filter(r => r.st === 'soon').length;
   const p = S.profile.tracks.find(x => x.id === t.id);
   return `<div class="plan-card" style="--uc:var(${t.color})"><span class="t-emoji" aria-hidden="true">${t.emoji}</span><div style="min-width:0"><b>${t.title}</b>
     <div class="lvl-pill">${lv.emoji} ${lv.name}${p?.placed ? ` · placed by quiz (${p.placed.right}/${p.placed.n})` : ''}</div>
-    <ul class="plan-facts"><li>${first ? `Starts with: <b>${esc(first)}</b>` : s.complete ? '<b>All done!</b>' : 'Lessons for this track are <b>coming soon</b>. They will use the same card template.'}</li>${tested ? `<li>${tested} intro lesson${tested > 1 ? 's' : ''} tested out (you can still open them)</li>` : ''}<li>${t.lessons.length} lessons${soon ? ` (${soon} coming soon)` : ''}${t.check ? ` · checkpoint: <b>${esc(NODE[t.check].title)}</b>` : ''}</li><li>Readings: ${(READINGS[t.id] || []).map(r => esc(r.title)).join(' · ')}</li></ul></div></div>`;
+    <ul class="plan-facts"><li>${first ? `Starts with: <b>${esc(first)}</b>` : s.complete ? '<b>All done!</b>' : 'Lessons for this track are <b>coming soon</b>. They will use the same card template.'}</li><li>${s.rows.length} ${lv.name.toLowerCase()} lessons${soon ? ` (${soon} coming soon)` : ''}${t.check ? ` · checkpoint: <b>${esc(NODE[t.check].title)}</b>` : ''}</li><li>Readings: ${(READINGS[t.id] || []).map(r => esc(r.title)).join(' · ')}</li></ul></div></div>`;
 }
 function obPlan(main, ui) {
   ui.body.append(h(`<div class="ob-head"><span class="hero-bull sm">${BULL_LOGO}</span><div><h2 class="l-q" style="margin:0">Here's your plan</h2><p class="muted">Lessons are 5–10 minutes, one idea per screen.</p></div></div>`));
@@ -125,7 +125,7 @@ function renderSettings(main) {
   const again = h(`<div class="row" style="gap:10px"><button class="btn ghost">Change focus</button><a class="btn ghost" href="#home">Back to my path</a></div>`);
   again.querySelector('button').onclick = openFocusPicker;
   wrap.append(again); main.append(wrap);
-  mentorTools(['Which level should I pick?', 'What does tested out mean?']);
+  mentorTools(['Which level should I pick?', 'How are the levels different?']);
 }
 
 /* ============================== LIBRARY ============================== */
