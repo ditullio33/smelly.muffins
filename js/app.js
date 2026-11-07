@@ -12,10 +12,11 @@ function confirmDialog({title,body,stay='Cancel',leave='Leave',onLeave}){
 }
 /* ============================== ROUTER & BOOT ============================== */
 const PAGES=['lab','course','onboard','settings','library'];
+let BACK='home'; // last browsing page; lessons and desks return here
 function route(){ const v=decodeURIComponent(location.hash.slice(1)); return NODE[v]||PAGES.includes(v)||(v.startsWith('t:')&&findCardLesson(v.slice(2)))?v:'home'; }
 function findCardLesson(id){ for(const t of TRACKS){ const l=t.lessons.find(x=>x.id===id&&built(x)&&!x.ref); if(l) return [t,l]; } return null; }
 function render(){
-  const v=route(); const main=$('#main'); main.innerHTML=''; closeMentor(true); if(ROOM){ ROOM.dispose(); ROOM=null; }
+  const v=route(); if(v==='home'||v==='course'||v==='lab'||v==='library'||v==='settings') BACK=v; const main=$('#main'); main.innerHTML=''; closeMentor(true); if(ROOM){ ROOM.dispose(); ROOM=null; }
   document.body.classList.toggle('onboarding', v==='onboard'||(v==='home'&&!S.profile));
   if(v==='home') S.profile ? renderMyPath(main) : renderOnboard(main);
   else if(v==='onboard') renderOnboard(main);
@@ -40,6 +41,6 @@ function tape(){
 }
 S = load();
 const hotData = window.claude?.hot?.data; if(hotData && hotData.S) S = hotData.S;
-S.unlockAll=true; save();
+save();
 try{ window.claude?.hot?.snapshot?.(()=>({S})); }catch(e){}
 tape(); render();

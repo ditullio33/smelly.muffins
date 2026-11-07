@@ -117,10 +117,10 @@ function renderTrackLesson(main, t, l) {
 function lessonHref(l) { return l.check || l.ref ? '#' + (l.check ? l.id : l.ref) : '#t:' + l.id; }
 function renderMyPath(main) {
   document.body.classList.remove('focus'); statsBar();
-  const picks = S.profile.tracks.map(p => TRACK[p.id]).filter(Boolean);
+  const all = S.profile.tracks.map(p => TRACK[p.id]).filter(Boolean); const picks = all.some(hasLessons) ? all.filter(hasLessons) : all; // hide empty tracks saved by older versions
   const fid = focusTrack(); if (fid) picks.sort((a, b) => (b.id === fid) - (a.id === fid));
   const states = Object.fromEntries(picks.map(t => [t.id, trackStates(t)]));
-  const curT = TRACK[focusTrack()] || picks.find(t => !states[t.id].complete) || picks[0];
+  const curT = [TRACK[focusTrack()]].find(t => t && hasLessons(t)) || picks.find(t => hasLessons(t) && !states[t.id].complete) || picks.find(hasLessons) || picks[0];
   if (!Array.isArray(S.openT)) S.openT = [curT.id];
   setMentor(curT.mentor); CTX = { screen: 'my learning path', tracks: picks.map(t => `${t.title} (${trackLevel(t.id)})`).join(', ') };
   const wrap = h(`<div class="stack" style="gap:14px"></div>`);

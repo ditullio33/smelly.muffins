@@ -66,7 +66,7 @@ function shell(main, node, {hearts=true}={}){
     ${hearts?`<span class="stat heart" id="hearts" role="img" aria-label="5 hearts left">${I.heart}<span>5</span></span>`:''}<button class="btn ghost sm" id="askm">${avatar(node.unit.mentor,'24px')}Ask ${MENTORS[node.unit.mentor].name.split(' ')[0]}</button></div>
     <div class="l-body" id="lb"></div><div class="l-foot" id="lf"><div class="foot-in" id="lfi"></div></div></div>`);
   main.append(el);
-  el.querySelector('#quit').onclick=()=>{ if(el.querySelector('.done-screen')){ location.hash='home'; return; } confirmDialog({title:'Quit this lesson?',body:'Your progress in this lesson will be lost.',stay:'Keep learning',leave:'Quit',onLeave:()=>location.hash='home'}); };
+  el.querySelector('#quit').onclick=()=>{ if(el.querySelector('.done-screen')){ go(BACK); return; } confirmDialog({title:'Quit this lesson?',body:'Your progress in this lesson will be lost.',stay:'Keep learning',leave:'Quit',onLeave:()=>go(BACK)}); };
   el.querySelector('#askm').onclick=openMentor;
   statsBar(`<span class="stat xp">${I.bolt}${S.xp}</span>`);
   return {
@@ -170,8 +170,8 @@ function celebrate(sh,{title,tiles,msg,extraBtn}){
   sh.body.innerHTML=''; sh.footReset(); sh.progress(1);
   sh.body.append(h(`<div class="stack done-screen">${avatar(mentorKey,'84px')}<h2 style="font-size:34px">${title}</h2><p class="muted">${msg}</p>
     <div class="done-tiles">${tiles.map(([t,v,c])=>`<div class="dt" style="--tc:${c}"><div class="t">${t}</div><div class="v">${v}</div></div>`).join('')}</div></div>`));
-  const go=h(`<button class="btn go big" style="margin-left:auto">Continue</button>`); go.onclick=()=>{ location.hash='home'; };
-  if(extraBtn) sh.fin.append(extraBtn); sh.fin.append(go); go.focus({preventScroll:true}); confetti(); say(msg);
+  const cont=h(`<button class="btn go big" style="margin-left:auto">Continue</button>`); cont.onclick=()=>{ go(BACK); };
+  if(extraBtn) sh.fin.append(extraBtn); sh.fin.append(cont); cont.focus({preventScroll:true}); confetti(); say(msg);
 }
 function confetti(){
   if(reduceMotion) return; const c=$('#confetti'), ctx=c.getContext('2d'); const W=c.width=innerWidth, H=c.height=innerHeight;
