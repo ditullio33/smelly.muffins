@@ -52,8 +52,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .rung.here{border-color:var(--ink);color:var(--ink);font-weight:600}
 .rung-sep{width:12px;height:1px;background:var(--line)}
 
-.app{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;padding-block:8px 40px;align-items:start}
-@media (max-width:980px){.app{grid-template-columns:minmax(0,1fr)}}
+.app{display:block;padding-block:8px 96px}
+main{max-width:960px;margin:0 auto}
 main{min-width:0;display:flex;flex-direction:column;gap:18px}
 
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
@@ -166,17 +166,33 @@ textarea{resize:vertical;min-height:70px}
 .checks li{display:flex;gap:8px;align-items:flex-start}
 .checks .m{font-family:var(--f-mono);font-weight:600;width:18px;flex:none}
 
-/* mentor */
-.mentor{position:sticky;top:12px;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);max-height:calc(100vh - 24px);min-height:420px}
-@media (max-width:980px){.mentor{position:static;max-height:none}}
-.m-head{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+/* mentor: a floating chat that opens from the corner button */
+.mentor{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(390px,calc(100vw - 32px));height:min(600px,calc(100vh - 120px));z-index:45;display:flex;flex-direction:column;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid color-mix(in srgb,var(--line) 60%,transparent);border-radius:20px;
+  box-shadow:0 24px 70px color-mix(in srgb,var(--ink) 22%,transparent),0 2px 8px color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden;
+  transform-origin:bottom right;transition:opacity .2s ease-out,transform .2s ease-out,visibility 0s}
+.mentor:not(.open){opacity:0;transform:translateY(14px) scale(.97);visibility:hidden;pointer-events:none;transition:opacity .15s ease-in,transform .15s ease-in,visibility 0s .15s}
+.m-head{display:flex;gap:12px;align-items:center;padding:14px 12px 12px 16px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 10%,transparent),transparent)}
 .avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;color:#fff;flex:none}
-.m-log{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:520px}
-@media (max-width:980px){.m-log{max-height:340px}}
-.msg{padding:10px 12px;border-radius:10px;font-size:14px;max-width:92%;white-space:pre-wrap}
-.msg.m{background:var(--surface-2);align-self:flex-start;border-top-left-radius:2px}
-.msg.u{background:var(--accent);color:var(--accent-ink);align-self:flex-end;border-top-right-radius:2px}
+.m-log{flex:1;min-height:0;overflow-y:auto;padding:6px 16px 14px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.msg{padding:10px 12px;border-radius:14px;font-size:14px;max-width:88%;white-space:pre-wrap;line-height:1.45}
+.msg.m{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.u{background:var(--accent);color:var(--accent-ink);align-self:flex-end;border-bottom-right-radius:4px}
 .msg .src{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.m-min{margin-left:auto;background:none;border:0;color:var(--muted);border-radius:10px;min-width:44px;min-height:44px;display:grid;place-items:center;cursor:pointer}
+.m-min:hover{background:var(--surface-2);color:var(--ink)}
+.m-fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:44;display:flex;align-items:center;gap:10px;padding:7px 18px 7px 7px;min-height:52px;border:0;border-radius:999px;
+  background:var(--ink);color:var(--bg);font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 12px 30px color-mix(in srgb,var(--ink) 30%,transparent);transition:transform .15s,opacity .15s}
+.m-fab:hover{transform:translateY(-2px)}
+.m-fab .avatar{width:38px;height:38px;font-size:14px}
+.m-dot{position:absolute;top:4px;left:36px;width:12px;height:12px;border-radius:50%;background:var(--loss);border:2px solid var(--ink)}
+body.mentor-open .m-fab,body.focus .m-fab{opacity:0;pointer-events:none;transform:scale(.9)}
+.m-teaser{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:44;max-width:min(300px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px 14px 4px 14px;padding:10px 12px;font-size:14px;line-height:1.4;box-shadow:0 12px 30px color-mix(in srgb,var(--ink) 18%,transparent);cursor:pointer;animation:tease .25s ease-out}
+@keyframes tease{from{opacity:0;transform:translateY(8px)}}
+body.mentor-open .m-teaser,body.focus .m-teaser{display:none}
+@media (max-width:640px){
+  .mentor{left:8px;right:8px;width:auto;bottom:calc(8px + env(safe-area-inset-bottom,0px));height:min(72vh,calc(100vh - 80px));border-radius:20px}
+}
 .m-ask{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
 .m-ask input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:9px 10px}
 .m-tools{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 12px}

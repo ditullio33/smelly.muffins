@@ -9,6 +9,7 @@ let mentorKey='intern'; const chat=[]; let voiceOn=false; let CTX={screen:'path'
 function setMentor(k){
   if(mentorKey===k && chat.length) return; const changed=mentorKey!==k && chat.length; mentorKey=k; const m=MENTORS[k];
   $('#m-av').textContent=m.init; $('#m-av').style.background=m.color; $('#m-name').textContent=m.name; $('#m-role').textContent=m.role;
+  $('#m-fab-av').textContent=m.init; $('#m-fab-av').style.background=m.color; $('#m-fab-name').textContent=m.name.split(' ')[0];
   if(changed) $('#m-log').appendChild(h(`<div class="eyebrow" style="text-align:center;padding-block:4px">Now with ${esc(m.name)}</div>`));
 }
 function avatar(k,size=''){ const m=MENTORS[k]; return `<span class="avatar" style="background:${m.color}${size?`;width:${size};height:${size};font-size:calc(${size} * .38)`:''}">${m.init}</span>`; }
@@ -18,6 +19,7 @@ function say(text, who='m', src=''){
   if(src) el.appendChild(h(`<span class="src">${esc(src)}</span>`));
   $('#m-log').appendChild(el); $('#m-log').scrollTop=1e9;
   if(who==='m' && voiceOn) speak(text);
+  if(who==='m' && text!=='Thinking…' && text!=='Reading your work…') nudge(text);
   return el;
 }
 function speak(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.rate=1.02; speechSynthesis.speak(u);}catch(e){} }
@@ -64,8 +66,15 @@ async function aiFeedback(prompt, fallback){
   }catch(e){ el.textContent=fallback; el.appendChild(h('<span class="src">Mentor notes</span>')); }
 }
 $('#m-form').addEventListener('submit',e=>{ e.preventDefault(); const v=$('#m-input').value.trim(); if(!v) return; $('#m-input').value=''; ask(v); });
-$('#m-close').onclick=()=>$('#mentor').classList.remove('open');
-function openMentor(){ $('#mentor').classList.add('open'); setTimeout(()=>$('#m-input').focus({preventScroll:true}),50); }
+let teaserT;
+function hideTeaser(){ clearTimeout(teaserT); $('#m-teaser')?.remove(); }
+function openMentor(){ $('#mentor').classList.add('open'); document.body.classList.add('mentor-open'); $('#m-fab').setAttribute('aria-expanded','true'); $('#m-dot').hidden=true; hideTeaser(); $('#m-log').scrollTop=1e9; setTimeout(()=>$('#m-input').focus({preventScroll:true}),60); }
+function closeMentor(silent){ const was=$('#mentor').classList.contains('open'); $('#mentor').classList.remove('open'); document.body.classList.remove('mentor-open'); $('#m-fab').setAttribute('aria-expanded','false'); if(was&&!silent) $('#m-fab').focus({preventScroll:true}); }
+function nudge(text){ if($('#mentor').classList.contains('open')) return; $('#m-dot').hidden=false; if(document.body.classList.contains('focus')) return;
+  hideTeaser(); const t=h(`<div class="m-teaser" id="m-teaser" role="status"></div>`); t.textContent=text.length>120?text.slice(0,117)+'…':text; t.onclick=openMentor; document.body.append(t); teaserT=setTimeout(hideTeaser,7000); }
+$('#m-close').onclick=()=>closeMentor();
+$('#m-fab').onclick=()=>$('#mentor').classList.contains('open')?closeMentor():openMentor();
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#mentor').classList.contains('open')&&!document.querySelector('.dlg-scrim')){ e.stopPropagation(); closeMentor(); } },true);
 function mentorTools(qs){
   const t=$('#m-tools'); t.innerHTML='';
   qs.forEach(q=>{ const b=h(`<button class="chip" type="button"></button>`); b.textContent=q; b.onclick=()=>ask(q); t.appendChild(b); });

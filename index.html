@@ -26,14 +26,14 @@
 
   <div class="app">
     <main id="main" tabindex="-1"></main>
-    <aside class="mentor" id="mentor" aria-label="Mentor chat">
+    <aside class="mentor" id="mentor" role="dialog" aria-label="Mentor chat">
       <div class="m-head">
         <div class="avatar" id="m-av">MC</div>
         <div style="min-width:0">
           <div style="font-weight:700" id="m-name">Maya Chen</div>
           <div class="muted" style="font-size:13px" id="m-role">Junior Analyst · your mentor</div>
         </div>
-        <button class="x m-close" id="m-close" aria-label="Close mentor chat"><svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></button>
+        <button class="m-min" id="m-close" aria-label="Minimize chat" title="Minimize"><svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button>
       </div>
       <div class="m-log" id="m-log" aria-live="polite"></div>
       <div class="m-tools" id="m-tools"></div>
@@ -43,6 +43,7 @@
         <button class="btn sm" type="submit">Ask</button>
       </form>
     </aside>
+    <button class="m-fab" id="m-fab" aria-controls="mentor" aria-expanded="false"><span class="avatar" id="m-fab-av" style="background:#23856A">MC</span><span>Ask <span id="m-fab-name">Maya</span></span><span class="m-dot" id="m-dot" hidden></span></button>
   </div>
 
   <footer>Simulations use fictional practice-market companies. Real-company figures are dated and shown for learning only. Not a prediction or investment advice. Built for Redhawk Builds 2026, Challenge 20.</footer>

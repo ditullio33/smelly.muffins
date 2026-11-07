@@ -8,7 +8,7 @@ function statsBar(extra=''){
 /* ============================== PATH ============================== */
 const ZIG=[0,1,1.6,1,0,-1,-1.6,-1];
 function renderPath(main){
-  document.body.classList.remove('focus'); $('#mentor').classList.remove('open'); statsBar();
+  document.body.classList.remove('focus'); statsBar();
   const cur=currentNode(); setMentor(cur?cur.unit.mentor:'senior');
   CTX={screen:'lesson path',current_unit:cur?cur.unit.title:'all done',xp:S.xp,completed:Object.keys(S.done).length+' of '+NODES.length};
   if(!Array.isArray(S.open)||!S.open.length) S.open=[cur?cur.unit.id:UNITS[0].id];

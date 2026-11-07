@@ -36,12 +36,6 @@
 .goal .fill{height:100%;background:#D9A21B;border-radius:999px}
 
 /* ---------- lesson screen ---------- */
-body.focus .app{grid-template-columns:minmax(0,1fr)}
-body.focus .mentor{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);max-height:none;border-radius:0;z-index:40;transform:translateX(105%);transition:transform .2s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
-body.focus .mentor.open{transform:none;box-shadow:-10px 0 30px rgba(0,0,0,.2)}
-.mentor .m-close{display:none;margin-left:auto}
-body.focus .mentor .m-close{display:grid}
-body.focus .m-log{max-height:none}
 .lesson{max-width:720px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px;min-height:70vh}
 .l-top{display:flex;align-items:center;gap:14px}
 .x{background:none;border:0;color:var(--muted);cursor:pointer;padding:6px;display:grid;place-items:center;border-radius:8px}

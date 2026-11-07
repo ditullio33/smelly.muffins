@@ -13,7 +13,7 @@ function confirmDialog({title,body,stay='Cancel',leave='Leave',onLeave}){
 /* ============================== ROUTER & BOOT ============================== */
 function route(){ const v=location.hash.slice(1); return NODE[v]||v==='lab'?v:'home'; }
 function render(){
-  const v=route(); const main=$('#main'); main.innerHTML=''; $('#mentor').classList.remove('open'); if(ROOM){ ROOM.dispose(); ROOM=null; }
+  const v=route(); const main=$('#main'); main.innerHTML=''; closeMentor(true); if(ROOM){ ROOM.dispose(); ROOM=null; }
   if(v==='home') renderPath(main);
   else if(v==='lab') renderLab(main);
   else { const n=NODE[v]; if(!isUnlocked(n.id)){ location.hash='home'; return; } n.kind==='lesson'?renderLesson(main,n):renderRoom(main,n); }
