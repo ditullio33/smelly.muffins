@@ -14,7 +14,11 @@ Each person owns a set of files. You can touch other files, but tell the owner i
 | 4 | **Units 10–12 + AI mentor** | `js/content/u10–u12.js`, `js/mentor.js` | Fact-check, then wire the mentor to an AI API so it works outside Claude |
 | 5 | **3D desk, UX, pitch & submission** | `js/room3d.js`, `js/desk.js`, `css/*`, `README.md` | Phone + laptop testing, demo script, Devpost write-up, slides |
 
-## Writing a lesson
+## Track lessons still to write
+
+`docs/lessons-to-write.md` lists the 41 empty track lessons. Biggest gaps: **Credit & Debt**, **Big Life Purchases**, **Private Equity & VC**, **Investment Banking & M&A**, **Taxes 101**. Claim one in the team chat, write it with the card template in `docs/lesson-template.md` (copy `js/content/t-budget-money.js`), cite the track's readings from the Library page, set `cards: true` on the lesson in `js/tracks.js`, and add its script tag in `index.html`.
+
+## Writing a unit lesson
 
 ```js
 // js/content/uXX.js
