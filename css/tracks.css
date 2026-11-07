@@ -153,3 +153,14 @@ body:has(.dlg-scrim) .m-teaser,body:has(.dlg-scrim) .m-fab{display:none}
 .lib-sec h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px}
 .lib-sec .readings{border-left:6px solid var(--uc)}
 @media (max-width:640px){.topnav a[href="#library"]{display:none}}
+
+/* pay stub */
+.stub{border:2px solid var(--line);border-radius:12px;background:var(--surface);padding:12px 14px;max-width:460px;font-size:15px}
+.stub .stub-h{display:flex;justify-content:space-between;gap:8px;font-weight:700;border-bottom:1px dashed var(--line);padding-bottom:6px;margin-bottom:6px}
+.stub table{width:100%;border-collapse:collapse}
+.stub td{padding:3px 0}
+.stub td:last-child{text-align:right;font-family:var(--f-mono)}
+.stub tr.sub td{color:var(--muted)}
+.stub tr.tot td{font-weight:800;border-top:2px solid var(--line);padding-top:6px}
+.card-html{margin-top:-4px}
+.stub .stub-h span:last-child{white-space:nowrap}

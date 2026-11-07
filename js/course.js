@@ -16,6 +16,12 @@ const SRC = {
   FED: 'Federal Reserve, federalreserve.gov',
   GAME: 'The Bullpen (fictional practice-market companies)',
   REAL: 'stockanalysis.com company statistics, late Oct–early Nov 2026',
+  SAYLOR: ch => `Personal Finance (Saylor Foundation edition), Ch. ${ch} (CC BY-NC-SA 3.0)`,
+  DOL: 'U.S. Department of Labor (EBSA), Savings Fitness: A Guide to Your Money and Your Financial Future',
+  ULL: 'Bolton, Personal Financial Planning for College Students (University of Louisiana at Lafayette), Ch. 5 (free to copy and share)',
+  KSU: 'Odle & Jones, Essential Living Skills: Money Management (Kansas State University, 2016; free to reproduce for education)',
+  IRS751: 'IRS Tax Topic 751: Social Security and Medicare withholding rates (6.2% and 1.45%)',
+  IRS15: 'IRS Publication 15 (Circular E), Employer\'s Tax Guide',
 };
 const T = (title, body, src, extra = {}) => ({ t: 'teach', title, body, src, ...extra });
 const MC = (q, opts, a, why, src, extra = {}) => ({ t: 'mc', q, opts, a, why, src, ...extra });

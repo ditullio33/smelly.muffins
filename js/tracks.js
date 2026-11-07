@@ -38,7 +38,7 @@ const TRACK_GROUPS = [
 
 const TRACKS = [
   { id: 'budget', group: 0, emoji: '💵', title: 'Budgeting & Saving', desc: 'paychecks, emergency funds, spending habits', check: 'a1', lessons: [
-    L('bs-money', 'What is money?', { cards: true }), L('bs-paycheck', 'Reading a paycheck'),
+    L('bs-money', 'What is money?', { cards: true }), L('bs-paycheck', 'Reading a paycheck', { cards: true }),
     L('bs-budget', 'Budgeting 101', { ref: 'u1l3', skip: 'i' }), L('bs-habits', 'Spending habits', { ref: 'u1l2', skip: 'i' }),
     L('bs-efund', 'Emergency funds', { ref: 'u1l5', skip: 'a' }), L('bs-infl', 'Inflation', { ref: 'u1l4', skip: 'a' }),
     L('bs-save', 'Saving vs. investing', { ref: 'u1l6' }), L('bs-72', 'Compound interest & the Rule of 72', { ref: 'u2l2' }) ] },
@@ -139,10 +139,14 @@ function stageChip(stage, auto) { const s = STAGE[stage]; if (!s) return ''; ret
 // ---- Readings: free, openly licensed or public-domain sources for each track (links open in a new tab) ----
 const BOOKS = {
   pof:   { title: 'Principles of Finance 2e', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-finance-2e', kind: 'Free textbook (PDF)', lic: 'CC BY-NC-SA 4.0' },
-  pf:    { title: 'Personal Finance', by: 'Rachel Siegel & Carol Yacht', url: 'https://open.umn.edu/opentextbooks/textbooks/31', kind: 'Free textbook', lic: 'CC BY-NC-SA' },
+  pf:    { title: 'Personal Finance (Saylor Foundation edition)', by: 'Rachel Siegel & Carol Yacht', url: 'https://open.umn.edu/opentextbooks/textbooks/31', kind: 'Free textbook', lic: 'CC BY-NC-SA' },
   acct:  { title: 'Principles of Accounting, Vol. 1: Financial Accounting', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-financial-accounting', kind: 'Free textbook (PDF)', lic: 'CC BY-NC-SA 4.0' },
   ent:   { title: 'Entrepreneurship', by: 'OpenStax', url: 'https://openstax.org/details/books/entrepreneurship', kind: 'Free textbook (PDF)', lic: 'CC BY 4.0' },
   macro: { title: 'Principles of Macroeconomics 3e', by: 'OpenStax', url: 'https://openstax.org/details/books/principles-macroeconomics-3e', kind: 'Free textbook (PDF)', lic: 'CC BY 4.0' },
+  dol:   { title: 'Savings Fitness: A Guide to Your Money and Your Financial Future', by: 'U.S. Department of Labor', url: 'https://www.dol.gov/agencies/ebsa/secure-your-financial-future/starting-a-job/publications', kind: 'PDF', lic: 'U.S. government work' },
+  ull:   { title: 'Personal Financial Planning for College Students', by: 'Brian Bolton, Univ. of Louisiana at Lafayette', url: 'https://business.louisiana.edu/sites/business/files/Personal%20Financial%20Planning%20-%20COLLEGE%20-%202026%20Fall.pdf', kind: 'PDF', lic: 'Free to copy and share ("a public good")' },
+  ksu:   { title: 'Essential Living Skills: Money Management', by: 'Odle & Jones, Kansas State University', url: 'https://bookstore.ksre.ksu.edu/pubs/S134G.pdf', kind: 'PDF (2016)', lic: 'Free to reproduce for education, with credit' },
+  irs751:{ title: 'Topic 751: Social Security and Medicare withholding rates', by: 'IRS', url: 'https://irs.gov/taxtopics/tc751', kind: 'Web', lic: 'U.S. government work' },
   ymyg:  { title: 'Your Money, Your Goals toolkit', by: 'Consumer Financial Protection Bureau', url: 'https://files.consumerfinance.gov/f/documents/cfpb_ymyg_a-financial-empowerment-toolkit_large-print.pdf', kind: 'PDF', lic: 'U.S. government work' },
   fdic:  { title: 'Money Smart for Young Adults', by: 'FDIC', url: 'https://www.fdic.gov/resources/consumers/money-smart/teach-money-smart/money-smart-for-young-adults.html', kind: 'Lessons + PDFs', lic: 'U.S. government work' },
   home:  { title: 'Your Home Loan Toolkit', by: 'Consumer Financial Protection Bureau', url: 'https://pueblo.gpo.gov/CFPBPubs/pdfs/CFPBWEB187.pdf', kind: 'PDF (2015)', lic: 'U.S. government work' },
@@ -155,16 +159,16 @@ const BOOKS = {
 };
 const R = (b, part) => ({ ...BOOKS[b], key: b, part });
 const READINGS = {
-  budget:    [R('pf', 'Ch. 1–5: planning, budgets, time value'), R('ymyg', 'Goals, cash flow, saving'), R('fdic', 'Young-adult money basics')],
-  credit:    [R('pf', 'Ch. 7: financial management and credit'), R('ymyg', 'Credit reports, scores and debt')],
+  budget:    [R('pf', 'Ch. 1–6: planning, budgets, paychecks and taxes'), R('dol', 'Pay stubs, take-home pay, spending plan'), R('ull', 'Ch. 2 budgeting, Ch. 5 401(k) and taxes'), R('ksu', 'Budgeting, banking and record keeping'), R('irs751', 'Payroll tax rates'), R('ymyg', 'Goals, cash flow, saving'), R('fdic', 'Young-adult money basics')],
+  credit:    [R('pf', 'Ch. 7: financial management and credit'), R('ull', 'Debt, interest and credit'), R('ymyg', 'Credit reports, scores and debt')],
   purchases: [R('pf', 'Ch. 8–10: consumer strategies, buying a home, insurance'), R('home', 'Mortgages, down payments, closing')],
-  taxes:     [R('p17', 'Filing, income, deductions, credits, IRAs'), R('pf', 'Ch. 6: taxes and tax planning')],
+  taxes:     [R('p17', 'Filing, income, deductions, credits, IRAs'), R('irs751', 'Social Security and Medicare rates'), R('pf', 'Ch. 6: taxes and tax planning')],
   stocks:    [R('road', 'Stocks, funds, brokers, fees'), R('pof', 'Stock markets and stock valuation'), R('pf', 'Ch. 15: owning stocks')],
   equity:    [R('pof', 'Financial statements, ratios, valuation'), R('acct', 'Reading the three statements')],
   portfolio: [R('road', 'Diversification, allocation, fees'), R('pf', 'Ch. 12–14: investing and behavioral finance'), R('pof', 'Risk and return')],
   bonds:     [R('pof', 'Bonds and bond valuation'), R('pf', 'Ch. 16: owning bonds'), R('fedpf', 'Monetary policy and interest rates')],
   alts:      [R('pf', 'Ch. 17: commodities, real estate, collectibles'), R('seccr', 'Crypto risks'), R('cftc', 'Digital asset advisories')],
-  wealth:    [R('pf', 'Ch. 1 and 11: planning, retirement, estates'), R('p17', 'IRA rules')],
+  wealth:    [R('pf', 'Ch. 1 and 11: planning, retirement, estates'), R('dol', 'Retirement saving and employer plans'), R('ull', 'Ch. 5: retirement, insurance, taxes'), R('p17', 'IRA rules')],
   pevc:      [R('ent', 'Funding a startup: angels, VC, stages'), R('pof', 'Valuation basics')],
   ibma:      [R('pof', 'Valuation methods'), R('ent', 'Raising capital')],
   macro:     [R('macro', 'GDP, inflation, unemployment, cycles'), R('fedpf', 'How the Fed works'), R('fedex', 'The Fed in plain English')],

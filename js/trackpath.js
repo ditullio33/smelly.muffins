@@ -28,6 +28,7 @@ function mountCard(ui, card, done, meta = '') {
     return;
   }
   const b = ui.body; b.innerHTML = ''; ui.footReset(); b.append(h(head()), h(`<h2 class="l-q">${esc(card.q)}</h2>`));
+  if (card.html) b.append(h(`<div class="card-html">${card.html}</div>`));
   CTX = { screen: 'lesson', lesson: CTX.lesson, question: card.q };
   ({ calc: mountCalc, slider: mountSlider, sort: mountSort, plan: mountPlan })[card.t](ui, card, done);
 }
