@@ -11,12 +11,19 @@ function confirmDialog({title,body,stay='Cancel',leave='Leave',onLeave}){
   document.body.append(sc); sc.querySelector('[data-a=stay]').focus();
 }
 /* ============================== ROUTER & BOOT ============================== */
-function route(){ const v=location.hash.slice(1); return NODE[v]||v==='lab'?v:'home'; }
+const PAGES=['lab','course','onboard','settings'];
+function route(){ const v=decodeURIComponent(location.hash.slice(1)); return NODE[v]||PAGES.includes(v)||(v.startsWith('t:')&&findCardLesson(v.slice(2)))?v:'home'; }
+function findCardLesson(id){ for(const t of TRACKS){ const l=t.lessons.find(x=>x.id===id&&built(x)&&!x.ref); if(l) return [t,l]; } return null; }
 function render(){
   const v=route(); const main=$('#main'); main.innerHTML=''; closeMentor(true); if(ROOM){ ROOM.dispose(); ROOM=null; }
-  if(v==='home') renderPath(main);
+  document.body.classList.toggle('onboarding', v==='onboard'||(v==='home'&&!S.profile));
+  if(v==='home') S.profile ? renderMyPath(main) : renderOnboard(main);
+  else if(v==='onboard') renderOnboard(main);
+  else if(v==='settings') S.profile ? renderSettings(main) : renderOnboard(main);
+  else if(v==='course') renderPath(main);
   else if(v==='lab') renderLab(main);
-  else { const n=NODE[v]; if(!isUnlocked(n.id)){ location.hash='home'; return; } n.kind==='lesson'?renderLesson(main,n):renderRoom(main,n); }
+  else if(v.startsWith('t:')) { const [t,l]=findCardLesson(v.slice(2)); renderTrackLesson(main,t,l); }
+  else { const n=NODE[v]; if(!isUnlocked(n.id)&&!pathAllows(n.id)){ location.hash='home'; return; } n.kind==='lesson'?renderLesson(main,n):renderRoom(main,n); }
   save();
 }
 window.addEventListener('hashchange',()=>{ render(); window.scrollTo({top:0}); });

@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/lessons.css">
+<link rel="stylesheet" href="css/tracks.css">
 <link rel="stylesheet" href="css/room.css">
 <link rel="stylesheet" href="css/accessibility.css">
 <style>:root{color-scheme:light} body{margin:0} img{max-width:100%} :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
@@ -21,7 +22,7 @@
 <div class="wrap">
   <div class="topbar" id="topbar">
     <a class="brand" href="#home" aria-label="The Bullpen home"><span class="brand-mark"><svg class="bull-logo" viewBox="0 0 64 64" aria-hidden="true" focusable="false">  <rect width="64" height="64" rx="14" fill="#14212B"/>  <path d="M21 25 C13 23 9.5 17 11 9" fill="none" stroke="#F3C34D" stroke-width="5" stroke-linecap="round"/>  <path d="M43 25 C51 23 54.5 17 53 10.5" fill="none" stroke="#F3C34D" stroke-width="5" stroke-linecap="round"/>  <path d="M53 4.5 L58 12 L48.5 11.5 Z" fill="#F3C34D"/>  <path d="M18.5 27 L9.5 29.5 L17.5 33 Z M45.5 27 L54.5 29.5 L46.5 33 Z" fill="#E0A93A"/>  <path d="M21 22 H43 Q46.5 22 46 26 L43.5 41 Q41.5 54 32 54 Q22.5 54 20.5 41 L18 26 Q17.5 22 21 22 Z" fill="#F3C34D"/>  <circle cx="26" cy="33" r="2.6" fill="#14212B"/><circle cx="38" cy="33" r="2.6" fill="#14212B"/>  <ellipse cx="32" cy="46" rx="8.5" ry="5.6" fill="#E0A93A"/>  <circle cx="28.8" cy="46" r="1.7" fill="#14212B"/><circle cx="35.2" cy="46" r="1.7" fill="#14212B"/></svg></span><span class="brand-name">The Bullpen</span></a>
-    <div class="row" style="gap:8px" id="stats"></div>
+    <div class="row" style="gap:8px;flex-wrap:nowrap"><nav class="topnav" aria-label="Main"><a href="#home">My plan</a><a href="#course">All units</a><a href="#settings" class="gear" aria-label="Plan settings" title="Plan settings"><svg class="ico" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></a></nav><div class="row" style="gap:8px" id="stats"></div></div>
   </div>
 
   <div class="app">
@@ -72,12 +73,17 @@
 <script src="js/content/u11.js"></script>
 <script src="js/content/u12.js"></script>
 <script src="js/course-index.js"></script>
+<script src="js/tracks.js"></script>
+<script src="js/content/t-budget-money.js"></script>
+<script src="js/placement.js"></script>
 <script src="js/state.js"></script>
 <script src="js/mentor.js"></script>
 <script src="js/lessons.js"></script>
 <script src="js/room3d.js"></script>
 <script src="js/desk.js"></script>
 <script src="js/lab.js"></script>
+<script src="js/trackpath.js"></script>
+<script src="js/onboard.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

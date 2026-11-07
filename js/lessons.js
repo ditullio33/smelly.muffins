@@ -14,7 +14,7 @@ function renderPath(main){
   if(!Array.isArray(S.open)||!S.open.length) S.open=[cur?cur.unit.id:UNITS[0].id];
   const wrap=h(`<div class="stack" style="gap:10px"></div>`);
   const totalDone=NODES.filter(n=>S.done[n.id]).length;
-  wrap.append(h(`<div class="course-head"><div class="row" style="gap:16px;flex-wrap:nowrap"><span class="hero-bull">${BULL_LOGO}</span><div><span class="eyebrow">Your course</span><h2 style="margin-top:4px">Learn to invest, one lesson at a time</h2></div></div><div class="course-prog"><b class="mono">${totalDone}/${NODES.length}</b><span class="muted">steps done</span></div></div>`));
+  wrap.append(h(`<div class="course-head"><div class="row" style="gap:16px;flex-wrap:nowrap"><span class="hero-bull">${BULL_LOGO}</span><div><span class="eyebrow">Full course · all 12 units</span><h2 style="margin-top:4px">Learn to invest, one lesson at a time</h2><a href="#home" style="font-size:14px">← Back to my plan</a></div></div><div class="course-prog"><b class="mono">${totalDone}/${NODES.length}</b><span class="muted">steps done</span></div></div>`));
   UNITS.forEach(u=>{
     const m=MENTORS[u.mentor]; const nodes=[...u.lessons.map(l=>NODE[l.id]),NODE[u.app.id]];
     const done=nodes.filter(n=>S.done[n.id]).length; const isOpen=S.open.includes(u.id);
@@ -23,9 +23,12 @@ function renderPath(main){
       <div style="min-width:0;text-align:left"><span class="eyebrow">Unit ${u.n} · ${done}/${nodes.length} done</span><h2 style="margin-top:4px">${u.title}</h2>
       <div class="unit-bar" aria-hidden="true"><span style="width:${Math.round(done/nodes.length*100)}%"></span></div></div>
       <div class="row" style="gap:10px;flex-wrap:nowrap"><span class="who">${avatar(u.mentor)}<span>Mentor: <b>${m.name}</b></span></span><span class="chev" aria-hidden="true">${isOpen?'▴':'▾'}</span></div></button>`);
-    head.onclick=()=>{ S.open=isOpen?S.open.filter(x=>x!==u.id):[...S.open,u.id]; save(); render(); };
+    // Toggle in place: no full re-render (that emptied the page and then scrolled to the START node).
+    head.onclick=()=>keepView(head,()=>{ const open=!S.open.includes(u.id); S.open=open?[...S.open,u.id]:S.open.filter(x=>x!==u.id); save();
+      head.classList.toggle('open',open); head.setAttribute('aria-expanded',open); head.querySelector('.chev').textContent=open?'▴':'▾';
+      if(open) sec.append(buildPath()); else sec.querySelector('.path')?.remove(); });
     sec.append(head);
-    if(isOpen){
+    function buildPath(){
       const path=h(`<div class="path" id="path-${u.id}"></div>`); let k=0;
       nodes.forEach(n=>{
         const dn=!!S.done[n.id], open=isUnlocked(n.id), here=cur&&cur.id===n.id;
@@ -37,8 +40,9 @@ function renderPath(main){
         w.querySelector('.node').onclick=()=>{ if(!open){ toast(`Finish "${prevTitle(n.id)}" to unlock this.`); return; } location.hash=n.id; };
         path.append(w);
       });
-      sec.append(path);
+      return path;
     }
+    if(isOpen) sec.append(buildPath());
     wrap.append(sec);
   });
   const lab=h(`<div class="lab-cta"><div><span class="eyebrow" style="color:var(--hl)">Practice anytime</span><h3 style="margin-top:4px;color:var(--tape-fg)">Scenario Lab: what happens when the Fed hikes rates, or before a midterm election?</h3></div><button class="btn">Open the lab</button></div>`);
@@ -49,6 +53,8 @@ function renderPath(main){
   mentorTools(['What is a stock?','Why invest instead of save?','What is compound interest?']);
   requestAnimationFrame(()=>{ const r=main.querySelector('.ring'); if(r) r.closest('.node-wrap').scrollIntoView({block:'center',behavior:'auto'}); });
 }
+// Runs a DOM change and keeps `anchor` at the same spot on screen, so content above or below changing height never moves the view.
+function keepView(anchor, change){ const before=anchor.getBoundingClientRect().top; change(); const d=anchor.getBoundingClientRect().top-before; if(Math.abs(d)>0.5) window.scrollBy(0,d); }
 function prevTitle(id){ const i=NODES.findIndex(n=>n.id===id); const p=NODES.slice(0,i).find(n=>!S.done[n.id]); return p?p.title:''; }
 let toastT; function toast(t){ let el=$('#toast'); if(!el){ el=h(`<div id="toast" role="status" style="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;font-weight:600;max-width:calc(100% - 32px)"></div>`); document.body.append(el);} el.textContent=t; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,2600); }
 
@@ -73,6 +79,7 @@ function shell(main, node, {hearts=true}={}){
 const PRAISE=['Nice!','Great job!','Correct!','You got it!','Exactly!','Sharp thinking!'];
 function mountItem(sh, item, done){
   const b=sh.body; b.innerHTML=''; sh.footReset();
+  if(item.stage&&!sh.noMeta) b.append(h(`<div class="card-meta">${stageChip(item.stage,item.stageAuto)}</div>`));
   const m=MENTORS[mentorKey];
   CTX={screen:'lesson',lesson:CTX.lesson,question:item.q||item.title,answer_options:item.opts||item.bank||null};
   if(item.t==='teach'){
@@ -143,6 +150,7 @@ function renderLesson(main, node){
     if(pos>=queue.length) return finish();
     const idx=queue[pos];
     mountItem(sh, items[idx], ok=>{
+      recordStage(items[idx].stage, ok);
       if(ok===false){ mistakes++; hearts--; sh.hearts(hearts); if(!requeued.has(idx)){ requeued.add(idx); queue.push(idx); } }
       else cleared++;
       sh.progress(Math.min(cleared/total,1)); pos++; nextItem();

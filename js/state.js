@@ -1,6 +1,6 @@
 // Saved progress, XP and streaks.
 /* ============================== STATE ============================== */
-const DEFAULT = {xp:0, streak:{count:0,last:null}, done:{}, best:{}, unlockAll:false, sims:{}, lab:'rateHike', today:{date:null,xp:0}, open:[]};
+const DEFAULT = {xp:0, streak:{count:0,last:null}, done:{}, best:{}, unlockAll:false, sims:{}, lab:'rateHike', today:{date:null,xp:0}, open:[], profile:null, openT:null, stages:{}, tl:{}};
 let S;
 function load(){ try{ const raw=localStorage.getItem('bullpen-v3'); if(raw) return Object.assign(structuredClone(DEFAULT), JSON.parse(raw)); }catch(e){} return structuredClone(DEFAULT); }
 function save(){ try{ localStorage.setItem('bullpen-v3', JSON.stringify(S)); }catch(e){} }

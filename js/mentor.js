@@ -24,6 +24,9 @@ function say(text, who='m', src=''){
 }
 function speak(t){ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.rate=1.02; speechSynthesis.speak(u);}catch(e){} }
 const FAQ = [
+  [/which level|what level|pick a level/i, 'Pick Beginner if the topic is new, Intermediate if you know the vocab and want scenarios, Advanced for case problems and timed decisions. Not sure? Take the 6-question placement quiz. You can change it anytime in plan settings.'],
+  [/tested out/i, 'Tested out means your level skips that intro lesson. It still shows on your path with a check, and you can open it anytime for a refresher.'],
+  [/credit score/i, 'A credit score (FICO runs 300 to 850) shows lenders how reliably you repay. Paying on time matters most, then keeping balances low compared with your limits.'],
   [/compound|interest on interest|rule of 72|double/i,'Compounding means your gains start earning their own gains. At 7% a year, money doubles about every 10 years (72 ÷ 7 ≈ 10). That is why starting early matters so much.'],
   [/diversif|eggs|basket|spread/i,'Diversifying means spreading money across many companies and sectors so one bad surprise can\'t sink you. An index fund does this in one purchase.'],
   [/index fund|etf/i,'An index fund buys a small slice of many companies at once. You get the average result of the whole market, usually for a tiny fee.'],
