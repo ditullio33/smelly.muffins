@@ -37,7 +37,7 @@ function renderPath(main){
         w.querySelector('.node').onclick=()=>{ if(!open){ toast(`Finish "${prevTitle(n.id)}" to unlock this.`); return; } location.hash=n.id; };
         path.append(w);
       });
-      sec.append(path); sec.append(h(illus(u.n, u.n%2?'right':'left')));
+      sec.append(path);
     }
     wrap.append(sec);
   });
