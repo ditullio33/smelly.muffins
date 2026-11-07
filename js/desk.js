@@ -10,7 +10,7 @@ function renderRoom(main,node){
   const notes=node.unit.lessons.map(l=>l.title);
   const wrap=h(`<div class="room" style="--uc:var(${node.unit.color})">
     <div class="r-stage" id="stage"><div class="r-fallback"><span>3D view unavailable on this device. Use the buttons below; everything still works.</span></div></div>
-    <div class="r-title"><span class="r-logo">B</span><div><b>The Bullpen</b><div class="r-sub">Unit ${node.unit.n} application · ${shift.desk}</div></div></div>
+    <div class="r-title"><span class="r-logo">${BULL_LOGO}</span><div><b>The Bullpen</b><div class="r-sub">Unit ${node.unit.n} application · ${shift.desk}</div></div></div>
     <div class="r-hud"><div class="r-chip"><span class="r-k">Task</span><b id="r-task">0/${sc.length}</b></div><div class="r-chip"><span class="r-k">Score</span><b id="r-score">0</b></div><div class="r-chip"><span class="r-k">Net worth</span><b id="r-nw">—</b></div>
       <button class="r-btn" id="r-ask">${avatar(shift.who,'22px')}Ask ${m.name.split(' ')[0]}</button><button class="r-btn icon" id="r-exit" aria-label="Leave the desk">${I.x}</button></div>
     <div class="r-flash" id="r-flash" role="status" aria-live="polite" hidden></div>
@@ -81,21 +81,21 @@ function renderRoom(main,node){
     say(c.ok?c.fb:`${c.fb} Look back at "${L.title}".`); refresh();
   }
   function pitchPanel(s){
-    const T={co:'NMBS',dec:'buy',reason:'',risk:''};
+    const T={co:'MSFT',dec:'buy',reason:'',risk:''};
     showPanel('term',`${head(s.from,s.title)}<p>Pick a company, decide buy or pass, back it with at least two numbers from the card, and name the biggest risk.</p>
-      <div class="grid g2" style="align-items:start"><div class="stack"><label class="field">Company<select id="pco">${COMPANIES.map(c=>`<option value="${c.id}">${c.name} (${c.id})</option>`).join('')}</select></label><div id="pcard"></div></div>
-      <div class="stack"><div class="row"><button class="chip on" data-d="buy">Buy</button><button class="chip" data-d="pass">Pass</button></div><label class="field">Why?<textarea id="prs" placeholder="Sales grow 22% a year and it keeps 26 cents of every dollar…"></textarea></label><label class="field">Biggest risk<textarea id="prk" placeholder="At 34× profits it's pricey, so if growth slows…"></textarea></label><button class="r-go" id="psub">Submit pitch</button><div id="r-fb"></div></div></div>`);
-    const sc_=()=>{ $('#pcard').innerHTML=card(CO[T.co]); }; sc_();
+      <div class="grid g2" style="align-items:start"><div class="stack"><label class="field">Company<select id="pco">${REAL.map(c=>`<option value="${c.id}">${c.name} (${c.id})</option>`).join('')}</select></label><div id="pcard"></div></div>
+      <div class="stack"><div class="row"><button class="chip on" data-d="buy">Buy</button><button class="chip" data-d="pass">Pass</button></div><label class="field">Why?<textarea id="prs" placeholder="It keeps 41 cents of every dollar as profit and has low debt…"></textarea></label><label class="field">Biggest risk<textarea id="prk" placeholder="At about 28× earnings, if growth slows the price could fall…"></textarea></label><button class="r-go" id="psub">Submit pitch</button><div id="r-fb"></div></div></div>`);
+    const sc_=()=>{ $('#pcard').innerHTML=card(RC[T.co]); }; sc_();
     $('#pco').onchange=()=>{ T.co=$('#pco').value; sc_(); };
     panel.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{ T.dec=b.dataset.d; panel.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('on',x===b)); });
-    $('#psub').onclick=()=>{ T.reason=$('#prs').value; T.risk=$('#prk').value; const c=CO[T.co];
-      const cats={growth:/grow|sales|revenue/i,profit:/profit|margin|cents|¢|keeps/i,debt:/debt|borrow|owe|loan/i,valuation:/p\/?e|expensive|cheap|price|pricey|valu|\d+\s*x|×/i,edge:/edge|moat|copy|competit|switch|patent|brand|loyal|only/i};
+    $('#psub').onclick=()=>{ T.reason=$('#prs').value; T.risk=$('#prk').value; const c=RC[T.co];
+      const cats={growth:/grow|sales|revenue/i,profit:/profit|margin|cents|¢|keeps/i,debt:/debt|borrow|owe|loan/i,valuation:/p\/?e|expensive|cheap|price|pricey|valu|cap|\d+\s*x|×/i,dividend:/dividend|yield/i,edge:/edge|moat|copy|competit|switch|patent|brand|loyal|only/i};
       const used=Object.entries(cats).filter(([,re])=>re.test(T.reason)).map(([k])=>k);
       const r1=T.reason.trim().length>=30, r2=used.length>=2, r3=T.risk.trim().length>=15&&/risk|could|if|competit|debt|rate|recession|slow|fall|drop|expensive|pricey|lose|trend|oil|patent/i.test(T.risk);
       const score=[r1,r2,r3].filter(Boolean).length; const ok=score>=2;
       $('#r-fb').innerHTML=`<div class="r-verdict ${ok?'good':'bad'}"><b>Score ${score}/3.</b><ul class="checks" style="margin-top:6px"><li><span class="m">${r1?'✓':'✗'}</span>Clear reason</li><li><span class="m">${r2?'✓':'✗'}</span>Two+ card stats (${used.join(', ')||'none'})</li><li><span class="m">${r3?'✓':'✗'}</span>Specific risk</li></ul><div class="row" style="margin-top:10px;gap:8px">${ok?'<button class="r-go" id="r-next">Finish the shift</button>':'<span class="muted">Revise and resubmit.</span>'}</div></div>`;
       const fb=score===3?`Solid pitch on ${c.name}. Next time, tell me what price you'd pay.`:`${score}/3. ${!r2?'Use at least two numbers from the card. ':''}${!r3?'Name a specific risk. ':''}`;
-      aiFeedback(`Student pitch on fictional ${c.name}: growth ${c.growth}%, margin ${c.margin}¢ per $1, debt ${c.debt}, P/E ${c.pe}. Decision ${T.dec}. Reason "${T.reason}". Risk "${T.risk}". Game score ${score}/3.`, fb);
+      aiFeedback(`Student pitch on real company ${c.name} (${c.sector}). Card data (${REAL_SRC}): market cap ${bigMoney(c.mcap)}, P/E ${c.pe}, net margin ${c.margin??'n/a'}%, debt-to-equity ${c.de}, dividend yield ${c.div??'n/a'}%. Do not give buy or sell advice; coach the reasoning only. Decision ${T.dec}. Reason "${T.reason}". Risk "${T.risk}". Game score ${score}/3.`, fb);
       if(ok){ $('#r-next').onclick=()=>{ if(answered) return; answered=true; results.push({title:s.title,ok:true,pick:`${T.dec} ${c.name}`,fb:`Pitch scored ${score}/3.`,lesson:s.lesson}); sitBack(); active=null; refresh(); setTimeout(next,600); }; }
     };
   }

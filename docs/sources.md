@@ -44,9 +44,9 @@ Primary sources:
 | What is a stock? | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0) |
 | How the stock market works | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>Investor.gov (U.S. Securities and Exchange Commission) |
 | Why stock prices move | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0) |
-| Dividends | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>Investor.gov (U.S. Securities and Exchange Commission) |
-| Market cap | Investor.gov (U.S. Securities and Exchange Commission) |
-| Stock exchanges and tickers | Investor.gov (U.S. Securities and Exchange Commission)<br>The Bullpen (fictional company data) |
+| Dividends | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>stockanalysis.com company statistics, late Oct–early Nov 2026<br>Investor.gov (U.S. Securities and Exchange Commission) |
+| Market cap | Investor.gov (U.S. Securities and Exchange Commission)<br>stockanalysis.com company statistics, late Oct–early Nov 2026 |
+| Stock exchanges and tickers | Investor.gov (U.S. Securities and Exchange Commission)<br>stockanalysis.com company statistics, late Oct–early Nov 2026 |
 
 ## Unit 5: Bonds
 
@@ -71,7 +71,7 @@ Primary sources:
 
 | Lesson | Sources |
 |---|---|
-| Diversification | OpenStax, Principles of Finance 2e, Ch. 15 (CC BY-NC-SA 4.0)<br>The Bullpen (fictional company data) |
+| Diversification | OpenStax, Principles of Finance 2e, Ch. 15 (CC BY-NC-SA 4.0)<br>The Bullpen (fictional practice-market companies)<br>stockanalysis.com company statistics, late Oct–early Nov 2026 |
 | Asset allocation | OpenStax, Principles of Finance 2e, Ch. 15 (CC BY-NC-SA 4.0) |
 | Dollar-cost averaging | Investor.gov (U.S. Securities and Exchange Commission) |
 | Rebalancing | Investor.gov (U.S. Securities and Exchange Commission) |
@@ -97,7 +97,7 @@ Primary sources:
 | Market crashes in history | Ken French Data Library, US market returns since 1926<br>OpenStax, Principles of Finance 2e, Ch. 12 (CC BY-NC-SA 4.0) |
 | Why timing the market fails | Ken French Data Library, US market returns since 1926<br>OpenStax, Principles of Finance 2e, Ch. 15 (CC BY-NC-SA 4.0)<br>Investor.gov (U.S. Securities and Exchange Commission) |
 | The Fed and interest rates | Federal Reserve, federalreserve.gov |
-| How the economy affects markets | OpenStax, Principles of Finance 2e, Ch. 12 (CC BY-NC-SA 4.0)<br>OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>The Bullpen (fictional company data)<br>U.S. Bureau of Labor Statistics, Consumer Price Index |
+| How the economy affects markets | OpenStax, Principles of Finance 2e, Ch. 12 (CC BY-NC-SA 4.0)<br>OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>U.S. Bureau of Labor Statistics, Consumer Price Index |
 
 ## Unit 10: Investor Psychology
 
@@ -116,17 +116,17 @@ Primary sources:
 |---|---|
 | Real estate and REITs | Investor.gov (U.S. Securities and Exchange Commission) |
 | Crypto basics and risks | Investor.gov (U.S. Securities and Exchange Commission)<br>FDIC.gov |
-| Commodities and gold | Investor.gov (U.S. Securities and Exchange Commission)<br>The Bullpen (fictional company data) |
+| Commodities and gold | Investor.gov (U.S. Securities and Exchange Commission) |
 | Options (intro only) | Investor.gov (U.S. Securities and Exchange Commission) |
 
 ## Unit 12: Analyzing Companies (advanced)
 
 | Lesson | Sources |
 |---|---|
-| Reading an income statement | OpenStax, Principles of Finance 2e, Ch. 5 (CC BY-NC-SA 4.0)<br>OpenStax, Principles of Finance 2e, Ch. 6 (CC BY-NC-SA 4.0) |
-| Reading a balance sheet | OpenStax, Principles of Finance 2e, Ch. 5 (CC BY-NC-SA 4.0)<br>OpenStax, Principles of Finance 2e, Ch. 6 (CC BY-NC-SA 4.0) |
+| Reading an income statement | OpenStax, Principles of Finance 2e, Ch. 5 (CC BY-NC-SA 4.0)<br>stockanalysis.com company statistics, late Oct–early Nov 2026<br>OpenStax, Principles of Finance 2e, Ch. 6 (CC BY-NC-SA 4.0) |
+| Reading a balance sheet | OpenStax, Principles of Finance 2e, Ch. 5 (CC BY-NC-SA 4.0)<br>stockanalysis.com company statistics, late Oct–early Nov 2026<br>OpenStax, Principles of Finance 2e, Ch. 6 (CC BY-NC-SA 4.0) |
 | Cash flow basics | OpenStax, Principles of Finance 2e, Ch. 5 (CC BY-NC-SA 4.0) |
-| P/E ratio | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0) |
-| Growth vs. value stocks | Ken French Data Library, US market returns since 1926<br>The Bullpen (fictional company data) |
+| P/E ratio | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0)<br>stockanalysis.com company statistics, late Oct–early Nov 2026 |
+| Growth vs. value stocks | Ken French Data Library, US market returns since 1926<br>stockanalysis.com company statistics, late Oct–early Nov 2026 |
 | Intro to valuation | OpenStax, Principles of Finance 2e, Ch. 11 (CC BY-NC-SA 4.0) |
 

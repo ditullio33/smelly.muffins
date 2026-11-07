@@ -17,7 +17,7 @@ unit({ id: 'u11', title: 'Other Investments', lessons: [
   { id: 'u11l3', title: 'Commodities and gold', items: [
     T('Raw materials', `<p><b>Commodities</b> are raw materials: oil, wheat, copper, gold. Prices move with <b>supply and demand</b>, weather and world events.</p><p><b>Gold</b> is often seen as a store of value during inflation or crises, but it pays no dividends or interest and has gone through long stretches of losses.</p>`, SRC.INV),
     TF('Gold pays dividends.', false, 'Gold produces no income.', SRC.INV),
-    MC('Oil prices jump. Which game company usually benefits?', ['Petra Energy', 'ZipZap Social', 'StreamVerse'], 0, 'Oil producers earn more when oil is pricier.', SRC.GAME),
+    MC('Oil prices jump. Which company\'s profits usually rise?', ['ExxonMobil', 'Microsoft', 'Nike'], 0, 'Oil producers earn more when oil is pricier.', SRC.INV),
     MC('What usually drives commodity prices?', ['Supply and demand, weather and world events', 'Company earnings reports', 'Dividend payments'], 0, 'They are raw goods, not businesses.', SRC.INV),
     MC('A downside of holding only gold for decades is…', ['No income and long periods of losses', 'It always loses value', 'It is illegal to own'], 0, 'Gold can protect in crises, but it does not compound like businesses.', SRC.INV),
   ]},

@@ -14,7 +14,7 @@ function renderPath(main){
   if(!Array.isArray(S.open)||!S.open.length) S.open=[cur?cur.unit.id:UNITS[0].id];
   const wrap=h(`<div class="stack" style="gap:10px"></div>`);
   const totalDone=NODES.filter(n=>S.done[n.id]).length;
-  wrap.append(h(`<div class="course-head"><div><span class="eyebrow">Your course</span><h2 style="margin-top:4px">Learn to invest, one lesson at a time</h2></div><div class="course-prog"><b class="mono">${totalDone}/${NODES.length}</b><span class="muted">steps done</span></div></div>`));
+  wrap.append(h(`<div class="course-head"><div class="row" style="gap:16px;flex-wrap:nowrap"><span class="hero-bull">${BULL_LOGO}</span><div><span class="eyebrow">Your course</span><h2 style="margin-top:4px">Learn to invest, one lesson at a time</h2></div></div><div class="course-prog"><b class="mono">${totalDone}/${NODES.length}</b><span class="muted">steps done</span></div></div>`));
   UNITS.forEach(u=>{
     const m=MENTORS[u.mentor]; const nodes=[...u.lessons.map(l=>NODE[l.id]),NODE[u.app.id]];
     const done=nodes.filter(n=>S.done[n.id]).length; const isOpen=S.open.includes(u.id);
@@ -37,7 +37,7 @@ function renderPath(main){
         w.querySelector('.node').onclick=()=>{ if(!open){ toast(`Finish "${prevTitle(n.id)}" to unlock this.`); return; } location.hash=n.id; };
         path.append(w);
       });
-      sec.append(path);
+      sec.append(path); sec.append(h(illus(u.n, u.n%2?'right':'left')));
     }
     wrap.append(sec);
   });
@@ -77,14 +77,14 @@ function mountItem(sh, item, done){
   CTX={screen:'lesson',lesson:CTX.lesson,question:item.q||item.title,answer_options:item.opts||item.bank||null};
   if(item.t==='teach'){
     b.append(h(`<div class="speech">${avatar(mentorKey,'52px')}<div class="bubble"><h3 style="margin-bottom:8px">${item.title}</h3><div class="teach-body">${item.body}</div>${item.src?`<p class="src-line">Source: ${esc(item.src)}</p>`:''}</div></div>`));
-    if(item.card) b.append(h(`<div style="max-width:380px">${card(CO[item.card])}</div>`));
+    if(item.card) b.append(h(`<div style="max-width:380px">${card(CO[item.card]||RC[item.card])}</div>`));
     if(item.widget) WIDGETS[item.widget](b);
     const go=h(`<button class="btn go big" style="margin-left:auto">Continue</button>`); go.onclick=()=>done(null); sh.fin.append(go); go.focus({preventScroll:true});
     return;
   }
   let sel=null, check;
   b.append(h(`<h2 class="l-q">${esc(item.q)}</h2>`));
-  if(item.card) b.append(h(`<div style="max-width:380px">${card(CO[item.card])}</div>`));
+  if(item.card) b.append(h(`<div style="max-width:380px">${card(CO[item.card]||RC[item.card])}</div>`));
   const checkBtn=h(`<button class="btn go big" style="margin-left:auto" disabled>Check</button>`); sh.fin.append(checkBtn);
   const enable=v=>{ checkBtn.disabled=!v; };
   let correctText='';

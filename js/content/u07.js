@@ -5,7 +5,7 @@ unit({ id: 'u7', title: 'Building a Portfolio', lessons: [
     MC('Sam puts 80% of his money into tech stocks. What is the biggest problem?', ['One bad year for tech could sink his whole portfolio', 'Tech stocks are illegal for teens', 'Nothing. Tech always wins'], 0, 'He is concentrated: one sector\'s bad news becomes his bad news.', SRC.OS(15)),
     TF(`Owning 10 different tech companies means you're well diversified.`, false, 'They are all in the same sector, so they tend to fall together.', SRC.OS(15)),
     FILL('In this game, a good rule is no more than ___ of your money in one sector.', ['25%', '50%', '75%', '90%'], '25%', 'Capping each sector limits the damage from one headline.', SRC.GAME),
-    MATCH('Match each company to its sector', [['FreshCart Grocers', 'Consumer staples'], ['BrightGrid Power', 'Utilities'], ['Petra Energy', 'Oil and gas'], ['Vitalis Health', 'Healthcare']], SRC.GAME),
+    MATCH('Match each real company to its sector', [['Walmart', 'Consumer staples'], ['NextEra Energy', 'Utilities'], ['ExxonMobil', 'Oil and gas'], ['Johnson & Johnson', 'Healthcare']], SRC.REAL),
   ]},
   { id: 'u7l2', title: 'Asset allocation', items: [
     T('Your mix matters most', `<p><b>Asset allocation</b> is how you split money among <b>stocks</b>, <b>bonds</b> and <b>cash</b>, for example 80% stocks and 20% bonds.</p><p>Your mix sets most of your risk and expected return, more than which individual stocks you pick.</p><p>More stocks: more growth and bigger swings. More bonds and cash: smaller swings and less growth.</p>`, SRC.OS(15)),

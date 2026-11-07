@@ -39,7 +39,7 @@ unit({ id: 'u9', title: 'How Markets Behave', lessons: [
     T('Markets look ahead', `<p>Investors watch <b>GDP</b> (total output), the <b>unemployment rate</b>, <b>inflation</b> and company <b>earnings</b>.</p><p>Stock markets are <b>forward-looking</b>: they often fall before a recession is announced and start rising before it ends.</p><p>In downturns, <b>defensive</b> companies (food, power, medicine) usually hold up better than <b>cyclical</b> ones (tractors, travel, gear).</p>`, SRC.OS(12)),
     MC('Why do stocks sometimes rise while the economy still looks bad?', ['Markets look ahead to future profits', 'Investors ignore the economy', 'Stocks always rise'], 0, 'Prices reflect expectations, not today\'s headlines.', SRC.OS(11)),
     TF('Stocks always fall during recessions and always rise during expansions.', false, 'Markets often turn before the economy does.', SRC.OS(12)),
-    MC('In a recession, which company usually holds up better?', ['FreshCart Grocers', 'Summit Outdoor', 'Ironclad Machines'], 0, 'People still buy groceries. Camping gear and tractors can wait.', SRC.GAME),
+    MC('In a recession, which kind of business usually holds up better?', ['Walmart (groceries and necessities)', 'Nike (sneakers and apparel)', 'Caterpillar (construction equipment)'], 0, 'People still buy groceries. New sneakers and bulldozers can wait.', SRC.OS(12)),
     MATCH('Match each indicator', [['GDP', 'Total output of the economy'], ['Unemployment rate', 'Share of workers without jobs'], ['CPI', 'Measures inflation'], ['Recession', 'Broad decline in economic activity']], SRC.BLS),
   ]},
 ], app: { id: 'a9', title: 'Live through 2008', blurb: 'Hold through a real crash, month by month.' },

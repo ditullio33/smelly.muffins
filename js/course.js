@@ -14,7 +14,8 @@ const SRC = {
   SIPC: 'SIPC.org',
   BLS: 'U.S. Bureau of Labor Statistics, Consumer Price Index',
   FED: 'Federal Reserve, federalreserve.gov',
-  GAME: 'The Bullpen (fictional company data)',
+  GAME: 'The Bullpen (fictional practice-market companies)',
+  REAL: 'stockanalysis.com company statistics, late Oct–early Nov 2026',
 };
 const T = (title, body, src, extra = {}) => ({ t: 'teach', title, body, src, ...extra });
 const MC = (q, opts, a, why, src, extra = {}) => ({ t: 'mc', q, opts, a, why, src, ...extra });

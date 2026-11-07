@@ -27,15 +27,51 @@ const CO = Object.fromEntries(COMPANIES.map(c=>[c.id,c]));
 const BOND = {id:'BOND',name:'Bond fund',beta:0.05,rate:-1.6,rec:0.25,inf:-0.6,vol:0.05};
 const SECTORS = [...new Set(COMPANIES.map(c=>c.sector))];
 
+/* ============================== REAL COMPANIES (research only) ============================== */
+// Real, dated figures used in lessons and the stock pitch. Simulations keep the fictional companies above,
+// so the game never invents news or prices for a real company. No logos; no buy/sell advice.
+// Source: stockanalysis.com statistics pages (trailing twelve months), checked Nov 7, 2026. Update before reuse.
+const REAL_SRC = 'stockanalysis.com company statistics, late Oct–early Nov 2026';
+const REAL = [
+  {id:'AAPL',name:'Apple',exchange:'Nasdaq',sector:'Technology',what:'Designs iPhones, Macs and other devices, and sells services like the App Store and iCloud.',mcap:4.57e12,pe:35.9,margin:27.6,de:0.78,div:0.34,asOf:'Nov 2026',edge:'Hundreds of millions of loyal users locked into its devices, apps and services.'},
+  {id:'MSFT',name:'Microsoft',exchange:'Nasdaq',sector:'Technology',what:'Makes Windows, Office and the Azure cloud that businesses rent.',mcap:3.94e12,pe:27.7,margin:41.2,de:0.28,div:0.74,asOf:'Nov 6, 2026',edge:'Businesses run on its software and cloud, and switching is painful.'},
+  {id:'NVDA',name:'Nvidia',exchange:'Nasdaq',sector:'Technology',what:'Designs the chips that power most AI data centers and many gaming PCs.',mcap:5.09e12,pe:26.7,margin:null,de:0.17,div:null,asOf:'Oct 23, 2026',edge:'The leading maker of AI chips; revenue more than doubled in each of fiscal 2024 and 2025.'},
+  {id:'JPM',name:'JPMorgan Chase',exchange:'NYSE',sector:'Banks',what:'The largest US bank: checking and savings accounts, loans, credit cards and investment banking.',mcap:895e9,pe:14.2,margin:34.6,de:3.56,div:1.96,asOf:'Oct 30, 2026',edge:'Huge size and trust. Like all banks, it carries lots of debt, because your deposits count as money it owes.'},
+  {id:'NEE',name:'NextEra Energy',exchange:'NYSE',sector:'Utilities',what:'Sells electricity through Florida Power & Light and builds wind and solar farms.',mcap:171.9e9,pe:14.8,margin:40.4,de:1.53,div:3.04,asOf:'Oct 27, 2026',edge:'A regulated utility with steady customers, plus one of the largest renewable energy businesses.'},
+  {id:'XOM',name:'ExxonMobil',exchange:'NYSE',sector:'Energy',what:'Finds, pumps and refines oil and natural gas around the world.',mcap:676.6e9,pe:17.1,margin:10.5,de:0.13,div:2.58,asOf:'Nov 6, 2026',edge:'One of the largest oil and gas companies; profits rise and fall with oil prices.'},
+  {id:'WMT',name:'Walmart',exchange:'NYSE',sector:'Consumer staples',what:'Runs the largest chain of stores in the US, selling groceries and everyday goods.',mcap:995.8e9,pe:45.5,margin:3.0,de:0.72,div:0.79,asOf:'Nov 6, 2026',edge:'Massive scale lets it charge low prices, and people shop for necessities in good times and bad.'},
+  {id:'JNJ',name:'Johnson & Johnson',exchange:'NYSE',sector:'Healthcare',what:'Develops prescription medicines and medical devices.',mcap:641.1e9,pe:40.4,margin:16.2,de:0.55,div:2.01,asOf:'Oct 26, 2026',edge:'Patents protect its medicines, and it has raised its dividend for decades.'},
+  {id:'CAT',name:'Caterpillar',exchange:'NYSE',sector:'Industrials',what:'Builds construction and mining equipment like bulldozers and excavators.',mcap:286.3e9,pe:24.5,margin:15.2,de:2.10,div:1.05,asOf:'Oct 30, 2026',edge:'A worldwide dealer network and steady sales of replacement parts.'},
+  {id:'NKE',name:'Nike',exchange:'NYSE',sector:'Consumer discretionary',what:'Designs and sells athletic shoes, clothing and gear.',mcap:57.4e9,pe:18.5,margin:6.7,de:0.73,div:4.24,asOf:'Oct 30, 2026',edge:'One of the best-known brands in the world, but people buy fewer sneakers when money is tight.'},
+];
+const RC = Object.fromEntries(REAL.map(c=>[c.id,c]));
+const bigMoney = x => x>=1e12 ? '$'+(x/1e12).toFixed(2).replace(/\.?0+$/,'')+' trillion' : '$'+Math.round(x/1e9)+' billion';
+const deLevel = de => de==null?null: de<0.5?'low': de<1.5?'med':'high';
 function card(c, {pick=false, sel=false}={}){
+  if(c.mcap){ const dl=deLevel(c.de);
+    return `<div class="cc real ${pick?'pick':''} ${sel?'sel':''}" data-id="${c.id}" ${pick?'role="button" tabindex="0"':''}>
+    <div class="cc-top"><span class="cc-name">${c.name}</span><span class="tick">${c.id}</span></div>
+    <div class="cc-tag">Real company · ${c.exchange} · data ${c.asOf}</div>
+    <div class="muted" style="font-size:13px">${c.sector} · ${c.what}</div>
+    <dl class="stats">
+      <dt>Market cap</dt><dd>${bigMoney(c.mcap)}</dd>
+      <dt>P/E ratio</dt><dd>${c.pe.toFixed(1)}×</dd>
+      ${c.margin!=null?`<dt>Profit margin</dt><dd>keeps ${Math.round(c.margin)}¢ per $1</dd>`:''}
+      <dt>Debt-to-equity</dt><dd>${c.de.toFixed(2)} <span class="lvl ${dl}">${{low:'Low',med:'Medium',high:'High'}[dl]}</span></dd>
+      ${c.div!=null?`<dt>Dividend yield</dt><dd>${c.div.toFixed(2)}%</dd>`:''}
+    </dl>
+    <div class="edge"><span class="eyebrow">Edge</span><br>${c.edge}</div>
+    <div class="cc-src">Source: ${REAL_SRC}. For learning only, not a recommendation.</div>
+  </div>`; }
   const dl={low:'Low',med:'Medium',high:'High'}[c.debt];
   return `<div class="cc ${pick?'pick':''} ${sel?'sel':''}" data-id="${c.id}" ${pick?'role="button" tabindex="0"':''}>
     <div class="cc-top"><span class="cc-name">${c.name}</span><span class="tick">${c.id}</span></div>
+    <div class="cc-tag fake">Practice-market company (fictional)</div>
     <div class="muted" style="font-size:13px">${c.sector} · ${c.what}</div>
     <dl class="stats">
       <dt>Sales growth</dt><dd>${c.growth}% / yr</dd>
       <dt>Profit margin</dt><dd>keeps ${c.margin}¢ per $1</dd>
-      <dt>Debt</dt><dd><span class="lvl ${c.debt}">${dl}</span></dd>
+      <dt>Debt</dt><dd><span class="lvl ${dl}">${dl}</span></dd>
       <dt>P/E ratio</dt><dd>${c.pe}× ${c.pe>=50?'<span class="lvl high">pricey</span>':c.pe<=12?'<span class="lvl low">cheap</span>':''}</dd>
     </dl>
     <div class="edge"><span class="eyebrow">Edge</span><br>${c.edge}</div>

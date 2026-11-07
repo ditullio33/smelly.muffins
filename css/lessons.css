@@ -111,3 +111,25 @@ button.unit:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srg
 .src-line{font-size:12px;color:var(--muted);margin-top:10px;font-family:var(--f-mono);letter-spacing:.01em}
 .fb-src{font-size:12px;color:var(--muted);margin-top:4px;font-family:var(--f-mono)}
 @media (max-width:640px){ button.unit .who > span:last-child{display:none} button.unit .who{padding:4px} }
+
+/* ---------- Brand bull + unit illustrations ---------- */
+.brand-mark{background:none;width:38px;height:38px;padding:0}
+.brand-mark .bull-logo,.r-logo .bull-logo{width:100%;height:100%;display:block}
+.r-logo{background:none;padding:0;overflow:hidden}
+.hero-bull{width:64px;height:64px;flex:none}
+.hero-bull .bull-logo{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 0 color-mix(in srgb,var(--ink) 25%,transparent))}
+#main{container-type:inline-size}
+.unit-sec{position:relative}
+.illus{display:none;position:absolute;top:150px;width:min(190px,24%);pointer-events:none;animation:float 6s ease-in-out infinite}
+.illus.left{left:1%} .illus.right{right:1%}
+.illus svg{width:100%;height:auto;display:block}
+@container (min-width: 640px){ .illus{display:block} }
+@keyframes float{50%{transform:translateY(-8px)}}
+@media (prefers-reduced-motion: reduce){ .illus{animation:none} }
+.i-u{fill:var(--uc)} .i-h{fill:var(--hl)} .i-k{fill:var(--ink)} .i-s{fill:var(--surface)} .i-m{fill:var(--line)}
+.i-t{fill:var(--ink);font-family:var(--f-display);font-weight:800}
+.i-o{stroke:var(--ink);stroke-width:3} .i-hs{stroke:var(--hl)} .i-us{stroke:var(--uc)} .i-ks{stroke:var(--ink)} .i-ss{stroke:var(--surface)}
+/* real vs practice company cards */
+.cc-tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;color:var(--gain);font-weight:600}
+.cc-tag.fake{color:var(--muted)}
+.cc-src{font-size:11px;color:var(--muted);font-family:var(--f-mono)}
