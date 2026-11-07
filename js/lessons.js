@@ -173,7 +173,7 @@ function confetti(){
 
 /* ============================== TEACH WIDGETS ============================== */
 function noData(){ return h(`<div class="callout">Historical data isn't loaded yet. Add the Ken French CSV and run <code>npm run data</code>. The rest of this lesson still works.</div>`); }
-const CRASHES=[['Great Depression',192901,193612],['1973–74 bear market',197210,197512],['Dot-com crash',200001,200312],['Financial crisis',200710,201003],['COVID crash',202001,202012]];
+const CRASHES=[['Great Depression',192901,193612],['1973–74 bear market',197210,197512],['Dot-com crash',200001,200312],['Financial crisis',200710,201003],['COVID crash',201912,202006]];
 function crashTable(){
   const M=FFD.monthly; const lvl=[]; let v=1; M.forEach(r=>{ v*=1+ffMkt(r); lvl.push({ym:r.ym,v}); });
   return CRASHES.map(([name,from,to])=>{ const win=lvl.filter(p=>p.ym>=from&&p.ym<=to); if(!win.length) return null;
@@ -219,7 +219,7 @@ const WIDGETS = {
       yrs.forEach(r=>{ const m=(r.mktrf+r.rf)/100; if(m<0) down++; if(!worst||m<worst.m) worst={m,y:r.y}; s=Math.round(s*(1+m)); c=Math.round(c*(1+r.rf/100)); sp.push(s); cp.push(c); });
       let wins=0, tot=0; for(let y=first;y<=last-st.hz+1;y++){ let gs=1,gc=1; A.filter(r=>r.y>=y&&r.y<y+st.hz).forEach(r=>{ gs*=1+(r.mktrf+r.rf)/100; gc*=1+r.rf/100; }); tot++; if(gs>gc) wins++; }
       w.querySelector('[data-k]').innerHTML=`<div class="kpi"><div class="v gain">${money(s)}</div><div class="l">$1,000 in US stocks</div></div><div class="kpi"><div class="v">${money(c)}</div><div class="l">$1,000 in Treasury bills</div></div><div class="kpi"><div class="v loss">${down}</div><div class="l">Down years (worst: ${worst.y}, ${pct(worst.m,0)})</div></div><div class="kpi"><div class="v">${wins}/${tot}</div><div class="l">${st.hz}-year stretches where stocks beat T-bills</div></div>`;
-      const ser=[{label:'US stocks',color:'--gain',values:sp,fill:true},{label:'Treasury bills',color:'--accent',values:cp}]; drawLine(w.querySelector('canvas'),ser,{xLabel:i=>String(st.start+i-1+ (i?0:0))}); w.querySelector('[data-lg]').innerHTML=legend(ser);
+      const ser=[{label:'US stocks',color:'--gain',values:sp,fill:true},{label:'Treasury bills',color:'--accent',values:cp}]; drawLine(w.querySelector('canvas'),ser,{xLabel:i=>String(st.start+i)}); w.querySelector('[data-lg]').innerHTML=legend(ser);
       w.querySelector('[data-n]').textContent=`Historical US market returns, Ken French Data Library (${first}–${last}). Past performance does not guarantee future results.`;
       CTX.widget={period:`${st.start}-${st.start+st.hz-1}`,stocks_end:money(s),tbills_end:money(c),down_years:down,worst_year:`${worst.y} (${pct(worst.m,0)})`,stretches_stocks_beat_tbills:`${wins} of ${tot}`}; };
     inp.oninput=upd; w.querySelectorAll('[data-hz]').forEach(x=>x.onclick=()=>{ st.hz=+x.dataset.hz; w.querySelectorAll('[data-hz]').forEach(y=>y.classList.toggle('on',y===x)); upd(); }); requestAnimationFrame(upd);
@@ -249,10 +249,10 @@ const WIDGETS = {
     if(!FFD) return b.append(noData());
     const A=FFD.annual; let g=1; const pts=[1]; A.forEach(r=>{ g*=1+r.hml/100; pts.push(g); });
     const dec={}; A.forEach(r=>{ const d=Math.floor(r.y/10)*10; dec[d]=(dec[d]||1)*(1+r.hml/100); });
-    const w=h(`<div class="panel stack"><div class="chart-box" style="height:200px"><canvas></canvas></div>${legend([{label:'$1 in value minus growth (HML), cumulative',color:'--accent'}])}
+    const w=h(`<div class="panel stack"><div class="chart-box" style="height:200px"><canvas></canvas></div>${legend([{label:'Growth of $1 in value stocks minus growth stocks (HML), cumulative',color:'--accent'}])}
       <div class="bars">${Object.entries(dec).map(([d,v])=>`<div class="dbar"><span>${d}s</span><span class="track"><span class="mid"></span><span class="fill" style="background:var(${v>=1?'--gain':'--loss'});${v>=1?`left:50%;width:${Math.min(50,(v-1)*50)}%`:`right:50%;width:${Math.min(50,(1-v)*50)}%`}"></span></span><span class="mono ${v>=1?'gain':'loss'}" style="text-align:right">${pct(v-1,0)}</span></div>`).join('')}</div>
       <p class="src-line">Fama/French HML factor (value minus growth), annual, Ken French Data Library. Past performance does not guarantee future results.</p></div>`); b.append(w);
-    requestAnimationFrame(()=>drawLine(w.querySelector('canvas'),[{label:'HML',color:'--accent',values:pts.map(x=>Math.round(x*100)),fill:true}],{xLabel:i=>String(A[0].y+i-1),money:false}));
+    requestAnimationFrame(()=>drawLine(w.querySelector('canvas'),[{label:'HML',color:'--accent',values:pts.map(x=>Math.round(x*100)),fill:true}],{xLabel:i=>String(A[0].y+i-1)}));
     CTX.widget={value_minus_growth_by_decade:Object.fromEntries(Object.entries(dec).map(([d,v])=>[d+'s',pct(v-1,0)]))};
   },
   compound(b){

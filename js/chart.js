@@ -7,7 +7,7 @@ function drawLine(canvas, series, {upto=null, markers=[], money:isMoney=true, xL
   ctx.clearRect(0,0,W,H);
   const n=Math.max(...series.map(s=>s.values.length)); const last=upto==null?n-1:Math.min(upto,n-1);
   let lo=Infinity, hi=-Infinity; for(const s of series) for(let i=0;i<=Math.min(last,s.values.length-1);i++){ lo=Math.min(lo,s.values[i]); hi=Math.max(hi,s.values[i]); }
-  if(!isFinite(lo)){lo=0;hi=1} const pad=(hi-lo)*0.08||1; lo-=pad; hi+=pad;
+  if(!isFinite(lo)){lo=0;hi=1} const pad=(hi-lo)*0.08||1; const nonneg=lo>=0; lo-=pad; hi+=pad; if(nonneg) lo=Math.max(0,lo);
   const L=64,R=12,T=12,B=26, pw=W-L-R, ph=H-T-B;
   const X=i=>L+pw*i/(n-1||1), Y=v=>T+ph*(1-(v-lo)/(hi-lo));
   ctx.font='11px '+css('--f-mono'); ctx.fillStyle=css('--muted'); ctx.strokeStyle=css('--line'); ctx.lineWidth=1;
