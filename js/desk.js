@@ -10,7 +10,7 @@ function renderRoom(main,node){
   const notes=node.unit.lessons.map(l=>l.title);
   const wrap=h(`<div class="room" style="--uc:var(${node.unit.color})">
     <div class="r-stage" id="stage"><div class="r-fallback"><span>3D view unavailable on this device. Use the buttons below; everything still works.</span></div></div>
-    <div class="r-title"><span class="r-logo">B</span><div><b>The Bullpen</b><div class="r-sub">Unit ${UNITS.indexOf(node.unit)+1} application · ${shift.desk}</div></div></div>
+    <div class="r-title"><span class="r-logo">B</span><div><b>The Bullpen</b><div class="r-sub">Unit ${node.unit.n} application · ${shift.desk}</div></div></div>
     <div class="r-hud"><div class="r-chip"><span class="r-k">Task</span><b id="r-task">0/${sc.length}</b></div><div class="r-chip"><span class="r-k">Score</span><b id="r-score">0</b></div><div class="r-chip"><span class="r-k">Net worth</span><b id="r-nw">—</b></div>
       <button class="r-btn" id="r-ask">${avatar(shift.who,'22px')}Ask ${m.name.split(' ')[0]}</button><button class="r-btn icon" id="r-exit" aria-label="Leave the desk">${I.x}</button></div>
     <div class="r-flash" id="r-flash" role="status" aria-live="polite" hidden></div>
@@ -20,7 +20,7 @@ function renderRoom(main,node){
     <nav class="r-dock" id="r-dock" aria-label="Desk objects"></nav>
   </div>`);
   main.append(wrap);
-  ROOM?.dispose(); ROOM=Room3D(wrap.querySelector('#stage'),{plate:(node.unit.rank).toUpperCase(),notes,tall:node.id==='a3'});
+  ROOM?.dispose(); ROOM=Room3D(wrap.querySelector('#stage'),{plate:node.unit.title.replace(/ \(.*\)/,'').toUpperCase(),notes,tall:node.unit.n>=9});
   const dockItems=[['back','Sit back'],['monitor','Monitor'],['phone','Phone'],['inbox','Inbox'],['jar','Emergency jar'],['calendar','Calendar'],['corkboard','Corkboard'],['window','Window']];
   const dock=wrap.querySelector('#r-dock');
   const drawDock=()=>{ dock.innerHTML=dockItems.map(([k,n])=>`<button class="r-dk ${active&&!answered&&sc[i]?.obj===k?'alert':''}" data-k="${k}">${n}</button>`).join(''); dock.querySelectorAll('button').forEach(b=>b.onclick=()=>b.dataset.k==='back'?sitBack():open(b.dataset.k)); };
@@ -36,7 +36,7 @@ function renderRoom(main,node){
     ROOM.update('cork',{notes,alert:active&&!answered&&sc[i].obj==='corkboard'});
     ROOM.update('jar',{amt:money(st.h.jar||0),cents:st.h.jar||0});
     hud(); drawDock();
-    CTX={screen:'3D desk application',unit:node.unit.rank,task:sc[i]?.title,portfolio:Object.fromEntries(holdings().map(([n,v])=>[n,money(v)])),net_worth:money(tt),latest_news:headline};
+    CTX={screen:'3D desk application',unit:node.unit.title,task:sc[i]?.title,portfolio:Object.fromEntries(holdings().map(([n,v])=>[n,money(v)])),net_worth:money(tt),latest_news:headline};
   };
   const flash=(txt)=>{ if(!txt) return; headline=txt; const f=$('#r-flash'); f.textContent=txt; f.hidden=false; clearTimeout(flash.t); flash.t=setTimeout(()=>f.hidden=true,6500); };
   const pw=wrap.querySelector('#r-pw'), panel=wrap.querySelector('#r-panel');
@@ -110,12 +110,12 @@ function renderRoom(main,node){
     ROOM.setAlert(null); active=null; const right=results.filter(r=>r.ok).length, total=results.length, fin=PF.tot(st); const pass=right>=shift.pass;
     if(pass){ S.done[node.id]=true; addXP(30); save(); confetti(); }
     const nextU=UNITS[UNITS.indexOf(node.unit)+1];
-    showPanel('glass report',`<div class="r-ph"><div><span class="r-from">Shift report · ${m.name}</span><h3>${pass?(nextU?`Promoted to ${nextU.rank}!`:'You made Senior Analyst!'):'Not ready for promotion yet'}</h3></div></div>
-      <div class="kpis"><div class="kpi"><div class="v">${right}/${total}</div><div class="l">Good decisions (need ${shift.pass})</div></div><div class="kpi"><div class="v ${fin>=book?'gain':'loss'}">${money(fin)}</div><div class="l">Your ending value</div></div><div class="kpi"><div class="v">${money(book)}</div><div class="l">If you'd made every textbook move</div></div></div>
+    showPanel('glass report',`<div class="r-ph"><div><span class="r-from">Shift report · ${m.name}</span><h3>${pass?(nextU?`Unit ${node.unit.n} complete! Next: ${nextU.title}`:'You finished the whole course!'):'Not quite yet'}</h3></div></div>
+      <div class="kpis"><div class="kpi"><div class="v">${right}/${total}</div><div class="l">Good decisions (need ${shift.pass})</div></div>${(fin||book)?`<div class="kpi"><div class="v ${fin>=book?'gain':'loss'}">${money(fin)}</div><div class="l">Your ending value</div></div><div class="kpi"><div class="v">${money(book)}</div><div class="l">If you'd made every textbook move</div></div>`:''}</div>
       <ul class="r-report">${results.map(r=>`<li class="${r.ok?'ok':'no'}"><span class="m">${r.ok?'✓':'✗'}</span><div><b>${esc(r.title)}</b><div class="muted">You chose: ${esc(r.pick)}</div><div>${esc(r.fb)}</div>${r.ok?'':`<a class="linkbtn" href="#${r.lesson}">Review: ${NODE[r.lesson].title}</a>`}</div></li>`).join('')}</ul>
       <div class="row" style="gap:8px;justify-content:flex-end">${pass?'':'<button class="r-btn" id="r-retry">Retry the shift</button>'}<button class="r-go" id="r-done">${pass?'Back to the path':'Back to lessons'}</button></div>`);
     $('#r-done').onclick=()=>location.hash='home'; $('#r-retry')?.addEventListener('click',()=>render());
-    say(pass?`Shift complete: ${right} of ${total} good calls. ${fin<book?`The textbook path would have ended at ${money(book)}. See which decisions cost you.`:'You matched the textbook path.'}`:`${right} of ${total}. Review the lessons marked on your report, then retry the shift.`);
+    say(pass?`Shift complete: ${right} of ${total} good calls. ${!(fin||book)?'':fin<book?`The textbook path would have ended at ${money(book)}. See which decisions cost you.`:'You matched the textbook path.'}`:`${right} of ${total}. Review the lessons marked on your report, then retry the shift.`);
     CTX={screen:'shift report',decisions:results.map(r=>({task:r.title,good:r.ok,chose:r.pick})),ending:money(fin),textbook_ending:money(book),passed:pass};
   }
   $('#r-exit').onclick=()=>{ if(i<0||i>=sc.length){ location.hash='home'; return; } confirmDialog({title:'Leave the desk?',body:'This shift\'s progress will be lost. You can restart it anytime.',stay:'Keep working',leave:'Leave',onLeave:()=>location.hash='home'}); }; $('#r-ask').onclick=openMentor;

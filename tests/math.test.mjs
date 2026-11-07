@@ -35,4 +35,10 @@ t('rate hikes hurt high-P/E growth more than banks', () => {
 t('recessions hurt groceries less than tractors', () => {
   assert.ok(run('impact(CO.FRSH,SCEN.recession.phases[0]) > impact(CO.IRON,SCEN.recession.phases[0])'));
 });
+t('Unit 2 claim: Ana (15–24) beats Ben (25–64) at 7%', () => {
+  let ana = 0; for (let a = 15; a < 65; a++) { ana = ana * 1.07 + (a < 25 ? 2000 : 0); }
+  let ben = 0; for (let a = 15; a < 65; a++) { ben = ben * 1.07 + (a >= 25 ? 2000 : 0); }
+  assert.ok(ana > ben, `ana ${ana} ben ${ben}`); assert.ok(Math.abs(ana - 414000) < 8000 && Math.abs(ben - 399000) < 8000, `ana ${Math.round(ana)} ben ${Math.round(ben)}`);
+});
+t('Unit 12 claim: dividend growth model $2 / (8% − 4%) = $50', () => { assert.equal(Math.round(2 / (0.08 - 0.04)), 50); });
 console.log(`\n${passed} passed`);

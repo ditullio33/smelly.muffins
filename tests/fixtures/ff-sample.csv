@@ -1,0 +1,15 @@
+Test fixture: format sample only. Values are illustrative, not real Ken French data.
+The real file has the same layout: text header, monthly section, annual section, copyright line.
+
+,Mkt-RF,SMB,HML,RF
+192607,    2.96,   -2.56,   -2.43,    0.22
+192608,    2.64,   -1.17,    3.82,    0.25
+200809,   -9.24,   -0.95,    5.63,    0.15
+200810,  -17.23,   -2.69,   -3.22,    0.08
+
+ Annual Factors: January-December 
+,Mkt-RF,SMB,HML,RF
+1927,   29.47,   -2.04,   -3.79,    3.12
+2008,  -38.34,    3.75,    0.33,    1.60
+
+Copyright 2025 Eugene F. Fama and Kenneth R. French

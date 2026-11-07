@@ -9,31 +9,44 @@ function statsBar(extra=''){
 const ZIG=[0,1,1.6,1,0,-1,-1.6,-1];
 function renderPath(main){
   document.body.classList.remove('focus'); $('#mentor').classList.remove('open'); statsBar();
-  const cur=currentNode(); setMentor(cur?cur.unit.mentor:'senior'); CTX={screen:'lesson path',rank:rank(),xp:S.xp,completed:Object.keys(S.done).length+' of '+NODES.length};
-  const wrap=h(`<div class="stack" style="gap:8px"></div>`);
-  UNITS.forEach((u,ui)=>{
-    const m=MENTORS[u.mentor];
-    wrap.append(h(`<div class="unit" style="background:var(${u.color})"><div><span class="eyebrow">Unit ${ui+1} · ${u.rank}</span><h2 style="margin-top:4px">${u.title}</h2></div><div class="who">${avatar(u.mentor)}<span>Mentor: <b>${m.name}</b></span></div></div>`));
-    const path=h(`<div class="path"></div>`); let k=0;
-    [...u.lessons.map(l=>NODE[l.id]),NODE[u.app.id]].forEach(n=>{
-      const done=!!S.done[n.id], open=isUnlocked(n.id), here=cur&&cur.id===n.id;
-      const icon= done? I.check : !open? I.lock : n.kind==='app'? I.chart : I.star;
-      const w=h(`<div class="node-wrap ${n.kind==='app'?'is-app':''}" style="--o:${ZIG[k++%ZIG.length]};--uc:var(${u.color})">
-        ${here?`<span class="ring"></span><span class="start-bubble">${n.kind==='app'?'SIMULATE':'START'}</span>`:''}
-        <button class="node ${n.kind==='app'?'app':''} ${done?'done':''} ${open?'':'locked'}" aria-label="${esc(n.title)}${done?' (complete)':open?'':' (locked)'}">${icon}</button>
-        <span class="node-label ${open?'':'locked'}">${n.kind==='app'?'<span class="eyebrow">Application</span><br>':''}${n.title}</span></div>`);
-      w.querySelector('.node').onclick=()=>{ if(!open){ toast(`Finish "${prevTitle(n.id)}" to unlock this.`); return; } location.hash=n.id; };
-      path.append(w);
-    });
-    wrap.append(path);
+  const cur=currentNode(); setMentor(cur?cur.unit.mentor:'senior');
+  CTX={screen:'lesson path',current_unit:cur?cur.unit.title:'all done',xp:S.xp,completed:Object.keys(S.done).length+' of '+NODES.length};
+  if(!Array.isArray(S.open)||!S.open.length) S.open=[cur?cur.unit.id:UNITS[0].id];
+  const wrap=h(`<div class="stack" style="gap:10px"></div>`);
+  const totalDone=NODES.filter(n=>S.done[n.id]).length;
+  wrap.append(h(`<div class="course-head"><div><span class="eyebrow">Your course</span><h2 style="margin-top:4px">Learn to invest, one lesson at a time</h2></div><div class="course-prog"><b class="mono">${totalDone}/${NODES.length}</b><span class="muted">steps done</span></div></div>`));
+  UNITS.forEach(u=>{
+    const m=MENTORS[u.mentor]; const nodes=[...u.lessons.map(l=>NODE[l.id]),NODE[u.app.id]];
+    const done=nodes.filter(n=>S.done[n.id]).length; const isOpen=S.open.includes(u.id);
+    const sec=h(`<section class="unit-sec" style="--uc:var(${u.color})"></section>`);
+    const head=h(`<button class="unit ${isOpen?'open':''}" style="background:var(${u.color})" aria-expanded="${isOpen}" aria-controls="path-${u.id}">
+      <div style="min-width:0;text-align:left"><span class="eyebrow">Unit ${u.n} · ${done}/${nodes.length} done</span><h2 style="margin-top:4px">${u.title}</h2>
+      <div class="unit-bar" aria-hidden="true"><span style="width:${Math.round(done/nodes.length*100)}%"></span></div></div>
+      <div class="row" style="gap:10px;flex-wrap:nowrap"><span class="who">${avatar(u.mentor)}<span>Mentor: <b>${m.name}</b></span></span><span class="chev" aria-hidden="true">${isOpen?'▴':'▾'}</span></div></button>`);
+    head.onclick=()=>{ S.open=isOpen?S.open.filter(x=>x!==u.id):[...S.open,u.id]; save(); render(); };
+    sec.append(head);
+    if(isOpen){
+      const path=h(`<div class="path" id="path-${u.id}"></div>`); let k=0;
+      nodes.forEach(n=>{
+        const dn=!!S.done[n.id], open=isUnlocked(n.id), here=cur&&cur.id===n.id;
+        const icon= dn? I.check : !open? I.lock : n.kind==='app'? I.chart : I.star;
+        const w=h(`<div class="node-wrap ${n.kind==='app'?'is-app':''}" style="--o:${ZIG[k++%ZIG.length]};--uc:var(${u.color})">
+          ${here?`<span class="ring"></span><span class="start-bubble">${n.kind==='app'?'SIMULATE':'START'}</span>`:''}
+          <button class="node ${n.kind==='app'?'app':''} ${dn?'done':''} ${open?'':'locked'}" aria-label="${esc(n.title)}${dn?' (complete)':open?'':' (locked)'}">${icon}</button>
+          <span class="node-label ${open?'':'locked'}">${n.kind==='app'?'<span class="eyebrow">Application</span><br>':''}${n.title}</span></div>`);
+        w.querySelector('.node').onclick=()=>{ if(!open){ toast(`Finish "${prevTitle(n.id)}" to unlock this.`); return; } location.hash=n.id; };
+        path.append(w);
+      });
+      sec.append(path);
+    }
+    wrap.append(sec);
   });
   const lab=h(`<div class="lab-cta"><div><span class="eyebrow" style="color:var(--hl)">Practice anytime</span><h3 style="margin-top:4px;color:var(--tape-fg)">Scenario Lab: what happens when the Fed hikes rates, or before a midterm election?</h3></div><button class="btn">Open the lab</button></div>`);
   lab.querySelector('button').onclick=()=>location.hash='lab'; wrap.append(lab);
-  const demo=h(`<label class="row muted" style="gap:8px;font-size:13px;justify-content:center;padding-block:10px"><input type="checkbox" ${S.unlockAll?'checked':''}> Demo mode: unlock every lesson (for judges and teammates)</label>`);
-  demo.querySelector('input').onchange=e=>{ S.unlockAll=e.target.checked; save(); render(); }; wrap.append(demo);
+  wrap.append(h(`<p class="muted" style="font-size:13px;text-align:center;padding-block:6px">Lesson content adapted from OpenStax Principles of Finance 2e (CC BY-NC-SA 4.0). Historical returns: Ken French Data Library.</p>`));
   main.append(wrap);
-  if(!chat.length) say('Hey, I\'m Maya. Each unit is a few short lessons, then an application where you run a simulation with fake money. Tap the glowing node to start. Ask me anything, anytime.');
-  mentorTools(['What is a stock?','Why invest instead of save?','What does an analyst do?']);
+  if(!chat.length) say('Hey, I\'m Maya. There are 12 units. Each one is a few short lessons, then an application at a 3D desk. Tap a unit to open it. Ask me anything, anytime.');
+  mentorTools(['What is a stock?','Why invest instead of save?','What is compound interest?']);
   requestAnimationFrame(()=>{ const r=main.querySelector('.ring'); if(r) r.closest('.node-wrap').scrollIntoView({block:'center',behavior:'auto'}); });
 }
 function prevTitle(id){ const i=NODES.findIndex(n=>n.id===id); const p=NODES.slice(0,i).find(n=>!S.done[n.id]); return p?p.title:''; }
@@ -63,7 +76,7 @@ function mountItem(sh, item, done){
   const m=MENTORS[mentorKey];
   CTX={screen:'lesson',lesson:CTX.lesson,question:item.q||item.title,answer_options:item.opts||item.bank||null};
   if(item.t==='teach'){
-    b.append(h(`<div class="speech">${avatar(mentorKey,'52px')}<div class="bubble"><h3 style="margin-bottom:8px">${item.title}</h3><div class="teach-body">${item.body}</div></div></div>`));
+    b.append(h(`<div class="speech">${avatar(mentorKey,'52px')}<div class="bubble"><h3 style="margin-bottom:8px">${item.title}</h3><div class="teach-body">${item.body}</div>${item.src?`<p class="src-line">Source: ${esc(item.src)}</p>`:''}</div></div>`));
     if(item.card) b.append(h(`<div style="max-width:380px">${card(CO[item.card])}</div>`));
     if(item.widget) WIDGETS[item.widget](b);
     const go=h(`<button class="btn go big" style="margin-left:auto">Continue</button>`); go.onclick=()=>done(null); sh.fin.append(go); go.focus({preventScroll:true});
@@ -109,7 +122,7 @@ function mountItem(sh, item, done){
   const feedback=(ok, extra='')=>{
     sh.foot.className='l-foot '+(ok?'good':'bad'); sh.fin.innerHTML='';
     const why=item.why||extra;
-    const left=h(`<div style="min-width:0" role="status" aria-live="polite"><div class="fb-title">${ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:item.t==='match'?'Almost!':'Not quite'}</div>${!ok&&correctText?`<div class="fb-text"><b>Correct answer:</b> ${esc(correctText)}</div>`:''}${why?`<div class="fb-text">${esc(why)}</div>`:''}<button class="linkbtn" style="margin-top:4px">Ask ${m.name.split(' ')[0]} why</button></div>`);
+    const left=h(`<div style="min-width:0" role="status" aria-live="polite"><div class="fb-title">${ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:item.t==='match'?'Almost!':'Not quite'}</div>${!ok&&correctText?`<div class="fb-text"><b>Correct answer:</b> ${esc(correctText)}</div>`:''}${why?`<div class="fb-text">${esc(why)}</div>`:''}${item.src?`<div class="fb-src">Source: ${esc(item.src)}</div>`:''}<button class="linkbtn" style="margin-top:4px">Ask ${m.name.split(' ')[0]} why</button></div>`);
     left.querySelector('.linkbtn').onclick=()=>{ openMentor(); ask(`Can you explain why "${correctText||'these matches'}" is right for: "${item.q}"?`, why||faq(item.q)); };
     const go=h(`<button class="btn go big">Continue</button>`); go.onclick=()=>done(ok); sh.fin.append(left,go); go.focus({preventScroll:true});
   };
@@ -159,7 +172,89 @@ function confetti(){
 }
 
 /* ============================== TEACH WIDGETS ============================== */
+function noData(){ return h(`<div class="callout">Historical data isn't loaded yet. Add the Ken French CSV and run <code>npm run data</code>. The rest of this lesson still works.</div>`); }
+const CRASHES=[['Great Depression',192901,193612],['1973–74 bear market',197210,197512],['Dot-com crash',200001,200312],['Financial crisis',200710,201003],['COVID crash',202001,202012]];
+function crashTable(){
+  const M=FFD.monthly; const lvl=[]; let v=1; M.forEach(r=>{ v*=1+ffMkt(r); lvl.push({ym:r.ym,v}); });
+  return CRASHES.map(([name,from,to])=>{ const win=lvl.filter(p=>p.ym>=from&&p.ym<=to); if(!win.length) return null;
+    let pk=win[0]; win.forEach(p=>{ if(p.v>pk.v) pk=p; }); const after=win.filter(p=>p.ym>=pk.ym); let tr=after[0]; after.forEach(p=>{ if(p.v<tr.v) tr=p; });
+    const i=lvl.findIndex(p=>p.ym===tr.ym); let rec=null; for(let j=i+1;j<lvl.length;j++) if(lvl[j].v>=pk.v){ rec=j-i; break; }
+    return {name,dd:tr.v/pk.v-1,peakL:ymLabel(pk.ym).replace(' ',' '),troughL:ymLabel(tr.ym),rec}; }).filter(Boolean);
+}
+
 const WIDGETS = {
+  budget(b){
+    const w=h(`<div class="panel stack"><label class="field">Monthly take-home pay <b class="mono" data-v></b><input type="range" min="200" max="5000" step="50" value="1200"></label><div class="kpis" data-k></div><div class="bars" data-b></div></div>`); b.append(w);
+    const upd=()=>{ const pay=+w.querySelector('input').value; w.querySelector('[data-v]').textContent=money(toC(pay)); const n=toC(pay*0.5), wa=toC(pay*0.3), sv=toC(pay)-n-wa;
+      w.querySelector('[data-k]').innerHTML=`<div class="kpi"><div class="v">${money(n)}</div><div class="l">Needs (50%)</div></div><div class="kpi"><div class="v">${money(wa)}</div><div class="l">Wants (30%)</div></div><div class="kpi"><div class="v gain">${money(sv)}</div><div class="l">Savings (20%)</div></div>`;
+      CTX.widget={take_home:money(toC(pay)),needs:money(n),wants:money(wa),savings:money(sv)}; };
+    w.querySelector('input').oninput=upd; upd();
+  },
+  simple(b){
+    const st={rate:10,yrs:30};
+    const w=h(`<div class="panel stack"><div class="grid g2"><label class="field">Interest rate <b class="mono" data-v="rate"></b><input type="range" min="1" max="12" value="10" data-k="rate"></label><label class="field">Years <b class="mono" data-v="yrs"></b><input type="range" min="1" max="40" value="30" data-k="yrs"></label></div><div class="kpis" data-k="k"></div><div class="chart-box" style="height:220px"><canvas></canvas></div><div data-k="lg"></div></div>`); b.append(w);
+    const upd=()=>{ w.querySelectorAll('input').forEach(i=>st[i.dataset.k]=+i.value); w.querySelector('[data-v=rate]').textContent=st.rate+'%'; w.querySelector('[data-v=yrs]').textContent=st.yrs;
+      const P=toC(1000), r=st.rate/100; const simp=[], comp=[]; let c=P; for(let y=0;y<=st.yrs;y++){ simp.push(Math.round(P*(1+r*y))); comp.push(c); c=Math.round(c*(1+r)); }
+      w.querySelector('[data-k=k]').innerHTML=`<div class="kpi"><div class="v">${money(simp[st.yrs])}</div><div class="l">Simple interest</div></div><div class="kpi"><div class="v gain">${money(comp[st.yrs])}</div><div class="l">Compound interest</div></div>`;
+      const s=[{label:'Compound',color:'--gain',values:comp,fill:true},{label:'Simple',color:'--accent',values:simp}]; drawLine(w.querySelector('canvas'),s,{xLabel:i=>'Yr '+i}); w.querySelector('[data-k=lg]').innerHTML=legend(s);
+      CTX.widget={start:'$1,000',rate:st.rate+'%',years:st.yrs,simple:money(simp[st.yrs]),compound:money(comp[st.yrs])}; };
+    w.querySelectorAll('input').forEach(i=>i.oninput=upd); requestAnimationFrame(upd);
+  },
+  bond(b){
+    const price=(face,c,r,n)=>{ let p=0; for(let t=1;t<=n;t++) p+=face*c/Math.pow(1+r,t); return p+face/Math.pow(1+r,n); };
+    const w=h(`<div class="panel stack"><p class="muted" style="font-size:14px">You own bonds with a <b>4% coupon</b> and $1,000 face value. Move today's market interest rate.</p><label class="field">Market interest rate <b class="mono" data-v></b><input type="range" min="1" max="9" step="0.25" value="4"></label><div class="kpis" data-k></div></div>`); b.append(w);
+    const upd=()=>{ const r=+w.querySelector('input').value/100; w.querySelector('[data-v]').textContent=(r*100).toFixed(2)+'%'; const p2=price(1000,0.04,r,2), p10=price(1000,0.04,r,10), p30=price(1000,0.04,r,30);
+      const cls=p=>p>=999.99?'gain':'loss'; w.querySelector('[data-k]').innerHTML=[['2-year bond',p2],['10-year bond',p10],['30-year bond',p30]].map(([n,p])=>`<div class="kpi"><div class="v ${cls(p)}">${money(Math.round(p*100))}</div><div class="l">${n} price</div></div>`).join('');
+      CTX.widget={coupon:'4%',market_rate:(r*100).toFixed(2)+'%',price_2yr:money(Math.round(p2*100)),price_10yr:money(Math.round(p10*100)),price_30yr:money(Math.round(p30*100))}; };
+    w.querySelector('input').oninput=upd; upd();
+  },
+  replay(b){
+    if(!FFD) return b.append(noData());
+    const A=FFD.annual, first=A[0].y, last=A[A.length-1].y; const st={hz:20,start:Math.max(first,last-19)};
+    const w=h(`<div class="panel stack"><div class="row" style="gap:8px">${[10,20,30].map(n=>`<button class="chip ${n===20?'on':''}" data-hz="${n}">${n} years</button>`).join('')}</div>
+      <label class="field">Start year <b class="mono" data-v></b><input type="range" min="${first}" max="${last-9}" value="${st.start}"></label><div class="kpis" data-k></div><div class="chart-box" style="height:220px"><canvas></canvas></div><div data-lg></div><p class="src-line" data-n></p></div>`); b.append(w);
+    const inp=w.querySelector('input');
+    const upd=()=>{ inp.max=last-st.hz+1; st.start=Math.min(+inp.value,last-st.hz+1); inp.value=st.start; w.querySelector('[data-v]').textContent=`${st.start}–${st.start+st.hz-1}`;
+      const yrs=A.filter(r=>r.y>=st.start&&r.y<st.start+st.hz); let s=toC(1000), c=toC(1000); const sp=[s], cp=[c]; let down=0, worst=null;
+      yrs.forEach(r=>{ const m=(r.mktrf+r.rf)/100; if(m<0) down++; if(!worst||m<worst.m) worst={m,y:r.y}; s=Math.round(s*(1+m)); c=Math.round(c*(1+r.rf/100)); sp.push(s); cp.push(c); });
+      let wins=0, tot=0; for(let y=first;y<=last-st.hz+1;y++){ let gs=1,gc=1; A.filter(r=>r.y>=y&&r.y<y+st.hz).forEach(r=>{ gs*=1+(r.mktrf+r.rf)/100; gc*=1+r.rf/100; }); tot++; if(gs>gc) wins++; }
+      w.querySelector('[data-k]').innerHTML=`<div class="kpi"><div class="v gain">${money(s)}</div><div class="l">$1,000 in US stocks</div></div><div class="kpi"><div class="v">${money(c)}</div><div class="l">$1,000 in Treasury bills</div></div><div class="kpi"><div class="v loss">${down}</div><div class="l">Down years (worst: ${worst.y}, ${pct(worst.m,0)})</div></div><div class="kpi"><div class="v">${wins}/${tot}</div><div class="l">${st.hz}-year stretches where stocks beat T-bills</div></div>`;
+      const ser=[{label:'US stocks',color:'--gain',values:sp,fill:true},{label:'Treasury bills',color:'--accent',values:cp}]; drawLine(w.querySelector('canvas'),ser,{xLabel:i=>String(st.start+i-1+ (i?0:0))}); w.querySelector('[data-lg]').innerHTML=legend(ser);
+      w.querySelector('[data-n]').textContent=`Historical US market returns, Ken French Data Library (${first}–${last}). Past performance does not guarantee future results.`;
+      CTX.widget={period:`${st.start}-${st.start+st.hz-1}`,stocks_end:money(s),tbills_end:money(c),down_years:down,worst_year:`${worst.y} (${pct(worst.m,0)})`,stretches_stocks_beat_tbills:`${wins} of ${tot}`}; };
+    inp.oninput=upd; w.querySelectorAll('[data-hz]').forEach(x=>x.onclick=()=>{ st.hz=+x.dataset.hz; w.querySelectorAll('[data-hz]').forEach(y=>y.classList.toggle('on',y===x)); upd(); }); requestAnimationFrame(upd);
+  },
+  crashes(b){
+    if(!FFD) return b.append(noData());
+    const rows=crashTable();
+    const w=h(`<div class="panel stack"><div class="bars">${rows.map(r=>`<div class="bar" style="grid-template-columns:150px minmax(0,1fr) 60px"><span><b>${r.name}</b><br><span class="muted" style="font-size:12px">${r.peakL} → ${r.troughL}</span></span><span class="track" style="height:14px"><span class="fill over" style="width:${Math.min(100,Math.abs(r.dd)*100)}%"></span></span><span class="mono loss" style="text-align:right">${pct(r.dd,0)}</span></div>`).join('')}</div>
+      <div class="r-hold">${rows.map(r=>`<div><span>${r.name}: back to the old high</span><b class="mono">${r.rec==null?'not within data':r.rec>=12?(r.rec/12).toFixed(1)+' years':r.rec+' months'}</b></div>`).join('')}</div>
+      <p class="src-line">Month-end total returns of the US stock market, Ken French Data Library. Month-end data understates drops that happened within a month. Not adjusted for inflation.</p></div>`); b.append(w);
+    CTX.widget={crashes:rows.map(r=>({name:r.name,drop:pct(r.dd,0),months_to_recover:r.rec}))};
+  },
+  timing(b){
+    if(!FFD) return b.append(noData());
+    const M=FFD.monthly, fy=Math.floor(M[0].ym/100), ly=Math.floor(M[M.length-1].ym/100);
+    const w=h(`<div class="panel stack"><label class="field">Invest $10,000 starting in <b class="mono" data-v></b><input type="range" min="${fy+1}" max="${ly-10}" value="${Math.max(fy+1,ly-29)}"></label><div class="bars" data-b></div><p class="src-line" data-n></p></div>`); b.append(w);
+    const upd=()=>{ const y=+w.querySelector('input').value; w.querySelector('[data-v]').textContent=`${y} (held to ${ly})`;
+      const rs=M.filter(r=>r.ym>=y*100+1); const sorted=[...rs].sort((a,b)=>ffMkt(b)-ffMkt(a));
+      const grow=skip=>{ const set=new Set(sorted.slice(0,skip)); let v=toC(10000); rs.forEach(r=>{ v=Math.round(v*(1+(set.has(r)?r.rf/100:ffMkt(r)))); }); return v; };
+      const res=[0,5,10,20].map(k=>[k,grow(k)]); const mx=res[0][1];
+      w.querySelector('[data-b]').innerHTML=res.map(([k,v])=>`<div class="bar" style="grid-template-columns:150px minmax(0,1fr) 90px"><span>${k?`Missed best ${k} months`:'Stayed invested'}</span><span class="track" style="height:14px"><span class="fill ${k?'over':''}" style="width:${Math.max(2,v/mx*100)}%"></span></span><span class="mono" style="text-align:right">${money(v)}</span></div>`).join('');
+      w.querySelector('[data-n]').textContent=`Missed months earn the Treasury-bill rate instead. US market total returns, Ken French Data Library, ${y}–${ly}. Past performance does not guarantee future results.`;
+      CTX.widget={start_year:y,stayed_invested:money(res[0][1]),missed_best_5:money(res[1][1]),missed_best_10:money(res[2][1]),missed_best_20:money(res[3][1])}; };
+    w.querySelector('input').oninput=upd; upd();
+  },
+  value(b){
+    if(!FFD) return b.append(noData());
+    const A=FFD.annual; let g=1; const pts=[1]; A.forEach(r=>{ g*=1+r.hml/100; pts.push(g); });
+    const dec={}; A.forEach(r=>{ const d=Math.floor(r.y/10)*10; dec[d]=(dec[d]||1)*(1+r.hml/100); });
+    const w=h(`<div class="panel stack"><div class="chart-box" style="height:200px"><canvas></canvas></div>${legend([{label:'$1 in value minus growth (HML), cumulative',color:'--accent'}])}
+      <div class="bars">${Object.entries(dec).map(([d,v])=>`<div class="dbar"><span>${d}s</span><span class="track"><span class="mid"></span><span class="fill" style="background:var(${v>=1?'--gain':'--loss'});${v>=1?`left:50%;width:${Math.min(50,(v-1)*50)}%`:`right:50%;width:${Math.min(50,(1-v)*50)}%`}"></span></span><span class="mono ${v>=1?'gain':'loss'}" style="text-align:right">${pct(v-1,0)}</span></div>`).join('')}</div>
+      <p class="src-line">Fama/French HML factor (value minus growth), annual, Ken French Data Library. Past performance does not guarantee future results.</p></div>`); b.append(w);
+    requestAnimationFrame(()=>drawLine(w.querySelector('canvas'),[{label:'HML',color:'--accent',values:pts.map(x=>Math.round(x*100)),fill:true}],{xLabel:i=>String(A[0].y+i-1),money:false}));
+    CTX.widget={value_minus_growth_by_decade:Object.fromEntries(Object.entries(dec).map(([d,v])=>[d+'s',pct(v-1,0)]))};
+  },
   compound(b){
     const st={age:16,mon:100};
     const w=h(`<div class="panel stack"><div class="grid g2"><label class="field">Start at age <b class="mono" data-v="age"></b><input type="range" min="16" max="45" step="1" value="16" data-k="age"></label><label class="field">Invest each month <b class="mono" data-v="mon"></b><input type="range" min="25" max="500" step="25" value="100" data-k="mon"></label></div>

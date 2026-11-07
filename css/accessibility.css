@@ -1,8 +1,8 @@
 /* Contrast, touch-target, feedback and reduced-motion overrides. Load last. */
 /* ================= UI/UX pass: contrast, touch targets, feedback, motion ================= */
-:root{ --xp:#946000; --fire:#B4530F; --gain-btn:#187A55; --loss-btn:#B8323A; --on-uc:#FFFFFF; }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }}
-:root[data-theme="dark"]{ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }
+:root{ --u4:#A4521C; --xp:#946000; --fire:#B4530F; --gain-btn:#187A55; --loss-btn:#B8323A; --on-uc:#FFFFFF; }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --u4:#A4521C; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }}
+:root[data-theme="dark"]{ --u1:#1F7A60; --u2:#3A52D6; --u3:#8045A8; --u4:#A4521C; --xp:#F3C34D; --fire:#F29A5B; --gain-btn:#187A55; --loss-btn:#B8323A; }
 body{font-size:16px}
 button,[role="button"],a{touch-action:manipulation}
 .stat.xp{color:var(--xp)} .stat.fire{color:var(--fire)}

@@ -97,3 +97,17 @@ body.focus .m-log{max-height:none}
 .dt .t{background:var(--tc);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px}
 .dt .v{font-family:var(--f-display);font-weight:800;font-size:24px;padding:10px 4px;color:var(--ink)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:50;width:100%;height:100%}
+
+/* ---------- 12-unit course: collapsible unit headers, source lines ---------- */
+.course-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;padding-block:6px 4px}
+.course-prog{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}
+.course-prog b{font-size:22px}
+.unit-sec{display:flex;flex-direction:column}
+button.unit{border:0;width:100%;cursor:pointer;font:inherit;text-align:left;box-shadow:0 5px 0 color-mix(in srgb,var(--uc) 62%,#000)}
+button.unit:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--uc) 62%,#000)}
+.unit-bar{height:8px;border-radius:999px;background:rgba(255,255,255,.25);margin-top:10px;max-width:320px;overflow:hidden}
+.unit-bar span{display:block;height:100%;background:#fff;border-radius:999px}
+.chev{font-size:20px;line-height:1;width:28px;text-align:center}
+.src-line{font-size:12px;color:var(--muted);margin-top:10px;font-family:var(--f-mono);letter-spacing:.01em}
+.fb-src{font-size:12px;color:var(--muted);margin-top:4px;font-family:var(--f-mono)}
+@media (max-width:640px){ button.unit .who > span:last-child{display:none} button.unit .who{padding:4px} }

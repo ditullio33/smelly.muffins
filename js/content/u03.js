@@ -1,0 +1,47 @@
+// Unit 3: Risk & Return
+unit({ id: 'u3', title: 'Risk & Return', lessons: [
+  { id: 'u3l1', title: 'What is risk?', items: [
+    T('Risk means uncertainty', `<p>In investing, <b>risk</b> is the chance that your results differ from what you expected, including losing money.</p><p>One common measure is <b>volatility</b>: how much returns swing up and down.</p><p>There are different kinds: <b>market risk</b>, <b>company risk</b>, <b>inflation risk</b> and <b>liquidity risk</b>.</p>`, SRC.OS(15)),
+    MC('In investing, what does "risk" mean?', ['The chance your results differ from what you expected, including losses', 'Only the chance of losing everything', 'How expensive a stock is'], 0, 'Risk is about uncertainty: outcomes can be better or worse than expected.', SRC.OS(15)),
+    MATCH('Match each risk to what it means', [['Market risk', 'The whole market falls'], ['Company risk', 'One business struggles'], ['Inflation risk', 'Prices rise faster than your money'], ['Liquidity risk', `Can't sell quickly without a loss`]], SRC.OS(15)),
+    TF('Keeping all your money in cash has no risk at all.', false, 'Cash carries inflation risk: it slowly loses buying power.', SRC.OS(15)),
+    MC('Which risk can owning many different companies reduce the most?', ['Company risk', 'Market risk', 'Inflation risk'], 0, 'Diversification spreads out single-company problems. It cannot remove whole-market drops.', SRC.OS(15)),
+  ]},
+  { id: 'u3l2', title: 'Risk vs. reward', items: [
+    T('More growth means more bumps', `<p>Investors expect <b>higher returns for taking more risk</b>. That extra expected return is the <b>risk premium</b>.</p><p>Since 1926 in the US, <b>stocks</b> have had the highest average returns and the biggest swings, <b>bonds</b> were in the middle, and <b>Treasury bills</b> (short-term government loans) had the lowest returns and the smallest swings.</p>`, SRC.OS(12)),
+    MC('Rank from lowest to highest long-run risk and return.', ['Treasury bills → bonds → stocks', 'Stocks → bonds → Treasury bills', 'Bonds → stocks → Treasury bills'], 0, 'More potential return has come with bigger swings.', SRC.OS(12)),
+    MC('What is a "risk premium"?', ['The extra return investors expect for taking more risk', 'A fee for buying stocks', 'Insurance against losses'], 0, 'No one takes extra risk for free. The premium is the reward.', SRC.OS(15)),
+    TF('An investment promising high returns with no risk is a red flag.', true, 'Real investments do not offer high returns with zero risk. That promise is a classic scam sign.', SRC.INV),
+    FILL('Treasury bills have historically had the ___ returns and the smallest swings.', ['lowest', 'highest', 'most volatile', 'riskiest'], 'lowest', 'Safety costs you return.', SRC.OS(12)),
+  ]},
+  { id: 'u3l3', title: 'Risk tolerance', items: [
+    T('How much swing can you handle?', `<p><b>Risk tolerance</b> has two parts:</p><p><b>Ability</b>: can your finances survive a drop? A long time horizon and steady income raise it.</p><p><b>Willingness</b>: can you stay calm when your balance falls?</p><p>The best plan is one you'll actually stick with during a crash.</p>`, SRC.OS(15)),
+    MC(`Your portfolio drops 25% and you can't sleep and want to sell. What does that suggest?`, ['Your risk tolerance is lower than your portfolio', 'You should buy riskier stocks', 'Nothing. Ignore it'], 0, 'Picking a mix you can hold through drops beats a "better" mix you panic out of.', SRC.OS(15)),
+    TF('Two people the same age always have the same risk tolerance.', false, 'Income, goals, savings and personality all matter.', SRC.OS(15)),
+    MC('When is your ability to take risk usually higher?', ['When you have many years to go and steady income', 'When you need the money next month', 'When you have no emergency fund'], 0, 'Time and stability let you ride out drops.', SRC.OS(15)),
+    MC('Why does matching investments to your risk tolerance matter?', ['It helps you avoid panic-selling at the worst time', 'It guarantees higher returns', 'It removes all risk'], 0, 'The biggest losses often come from bailing out during a drop.', SRC.OS(15)),
+  ]},
+  { id: 'u3l4', title: 'Time horizon', items: [
+    T('When do you need the money?', `<p>Your <b>time horizon</b> is how long until you need the money.</p><p><b>Short</b> (under ~3 years): keep it safe, in savings or short-term bonds.</p><p><b>Long</b> (10+ years): stocks can make sense, because there is time to recover from drops.</p>`, SRC.OS(15)),
+    MATCH('Match each goal to a sensible place for the money', [['Prom in 6 months', 'Savings account'], ['Car in 3 years', 'Mostly bonds and savings'], ['Retirement in 45 years', 'Mostly stocks']], SRC.OS(15)),
+    TF('The longer your time horizon, the more short-term drops you can usually ride out.', true, 'Time gives prices room to recover.', SRC.OS(15)),
+    MC('Why do target-date funds get safer as the target year gets closer?', ['There is less time to recover from a drop', 'Stocks stop working near retirement', 'Bonds always beat stocks'], 0, 'As the goal nears, a big drop becomes harder to recover from.', SRC.INV),
+    FILL('Money you need within a year usually belongs in ___.', ['savings', 'stocks', 'crypto', 'options'], 'savings', 'Short horizon means safety first.', SRC.OS(15)),
+  ]},
+], app: { id: 'a3', title: 'Match the client', blurb: 'Read each client, then match their risk and time horizon.' },
+shift: { desk: 'Risk & Return desk', intro: `Clients are coming in with different goals. Maya wants you to match each one to the right level of risk.`,
+  init(st) { PF.set(st, {}); st.start = 0; },
+  scenarios: [
+    { obj: 'inbox', alert: 'New client file in your inbox', from: 'Client file · Maya Chen', title: 'Client A: Sam, 16, saving for retirement', lesson: 'u3l4',
+      body: () => `<p>Sam is 16, has a summer job, an emergency fund, and wants to start a retirement account. He says drops don't scare him.</p><p><b>Which mix fits?</b></p>`,
+      choices: [{ t: 'About 90% stock index fund, 10% bonds', ok: true, fb: 'Long horizon and calm temperament: he can handle stock swings.' }, { t: '100% savings account', ok: false, fb: '50 years in cash would barely beat inflation.' }, { t: '100% in one exciting stock', ok: false, fb: 'Long horizon doesn\'t mean putting everything in one company.' }] },
+    { obj: 'phone', alert: 'Your phone buzzed: client call', from: 'Call · Client B', title: 'Client B: tuition due in 12 months', lesson: 'u3l4', phone: true,
+      body: () => `<div class="bub them">Hi! I have $8,000 for my first year of college tuition. It's due next August. Should I put it in stocks to grow it?</div>`,
+      choices: [{ t: '"Keep it in savings or short-term Treasuries. You need it in a year."', ok: true, fb: 'One-year horizon: a 30% stock drop would wreck the plan.' }, { t: '"Yes, stocks grow faster."', ok: false, fb: 'Over one year, stocks can easily be down. This money has a deadline.' }] },
+    { obj: 'calendar', alert: 'Calendar: client check-in', from: 'Calendar · Client A check-in', title: 'The market fell 30%. Sam calls', lesson: 'u3l3',
+      body: () => `<p>Stocks fell 30%. Sam (16, retirement account) asks if he should sell everything.</p>`,
+      choices: [{ t: 'Remind him of his 50-year horizon and stick to the plan', ok: true, fb: 'His ability to take risk is high. Selling would lock in the loss.' }, { t: 'Sell everything and wait for things to calm down', ok: false, fb: 'Selling after a drop is how temporary losses become permanent.' }] },
+    { obj: 'monitor', alert: 'Ad flagged on your monitor', from: 'Terminal · Compliance flag', title: '"15% a year, guaranteed, no risk!"', lesson: 'u3l2',
+      body: () => `<p>A website promises <b>15% a year, guaranteed, with zero risk</b>. A client wants to invest. What do you say?</p>`,
+      choices: [{ t: 'High returns never come with zero risk. This is a red flag', ok: true, fb: 'Higher return always means more risk. "Guaranteed high returns" is a classic scam sign.' }, { t: 'Sounds great, go for it', ok: false, fb: 'If something offered high returns with no risk, everyone would buy it.' }] },
+  ], pass: 3 } });
