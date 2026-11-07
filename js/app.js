@@ -27,6 +27,11 @@ function render(){
   save();
 }
 window.addEventListener('hashchange',()=>{ render(); window.scrollTo({top:0}); });
+// All in-app links go through here. Plain href="#..." links don't navigate on the hosted page (the host page sets a different base URL),
+// and clicking the page you're already on fires no hashchange, so both cases re-render directly.
+function go(v){ if(decodeURIComponent(location.hash.slice(1))===v){ render(); window.scrollTo({top:0}); } else location.hash=v; }
+document.addEventListener('click',e=>{ const a=e.target.closest('a[href^="#"]'); if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey) return;
+  const v=a.getAttribute('href').slice(1); e.preventDefault(); if(v==='main'){ $('#main').focus(); return; } go(v); });
 function tape(){
   const sim=simulateDaily({days:30,seed:7,events:[]});
   const items=COMPANIES.map(c=>{ const a=sim.P[c.id][29], b=sim.P[c.id][30]; const ch=b/a-1; return `<span><b>${c.id}</b>${b.toFixed(2)} <span style="color:${ch>=0?'#4FD39A':'#FF7A80'}">${pct(ch,2)}</span></span>`; }).join('');
