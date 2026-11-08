@@ -54,6 +54,15 @@ Until then, the history widgets show a "data not loaded" note and the Unit 9 des
 
 `#home` (My plan, or onboarding for new players) · `#onboard` · `#settings` · `#library` · `#course` (all 12 units) · `#lab` · `#u1l1`… (unit lessons) · `#a1`… (desk sims) · `#t:bs-money` (card lessons). In-app links go through `go()` in `js/app.js`.
 
+## Accounts (Supabase)
+
+`js/auth.js` adds log in / sign up (`#login`) and saves progress to Supabase project **the-bullpen** (`ewspjdguxitmnscyjvbk`). It calls Supabase's REST API with `fetch`, so there's no extra library. The publishable key in the file is meant to be public. Row-level security means each player can only read and write their own row.
+
+- Tables: `profiles` (one per user, made automatically on sign-up) and `progress` (`user_id`, `state` jsonb, `updated_at`).
+- On log in, the copy with more finished lessons wins and is saved to both places. While logged in, every save also syncs, about 1.5 s later.
+- Guests can still play; their progress stays in the browser.
+- **Dashboard settings to check before the demo:** Authentication → URL Configuration → set the **Site URL** to wherever the game is hosted. If judges should sign up without confirming their email, turn off **Confirm email** under Authentication → Sign In / Providers → Email.
+
 ## Publish a single file
 
 `npm run bundle` writes `dist/the-bullpen.html` (everything inlined) and `dist/artifact.html` (for publishing as a Claude artifact).
