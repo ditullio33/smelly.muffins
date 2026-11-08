@@ -164,3 +164,34 @@ body:has(.dlg-scrim) .m-teaser,body:has(.dlg-scrim) .m-fab{display:none}
 .stub tr.tot td{font-weight:800;border-top:2px solid var(--line);padding-top:6px}
 .card-html{margin-top:-4px}
 .stub .stub-h span:last-child{white-space:nowrap}
+/* ---------- login / sign up ---------- */
+#nav-auth{border:2px solid var(--line);margin-left:4px}
+#nav-auth.signed-in{background:var(--surface-2);max-width:14ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;line-height:24px}
+@media (max-width:560px){.topnav a#nav-auth{display:inline-flex}}
+.auth-wrap{display:flex;justify-content:center;padding:12px 0 24px}
+.auth-card{width:100%;max-width:440px;background:var(--surface);border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:28px 24px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.auth-card .hero-bull{width:64px;height:64px;margin:0 auto}
+.auth-card h2{margin:0}
+.auth-card p{margin:0}
+.auth-tabs{align-self:center;margin:4px 0}
+.auth-form{display:flex;flex-direction:column;gap:12px;text-align:left}
+.fld{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px}
+.fld input{font:inherit;font-weight:500;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;min-height:48px;width:100%}
+.fld input:focus{outline:none;border-color:var(--accent)}
+.fld small{font-weight:500}
+.pw{position:relative;display:block}
+.pw input{padding-right:72px}
+.pw .linkbtn{position:absolute;right:8px;top:50%;transform:translateY(-50%);min-height:40px}
+.auth-err{min-height:1.2em;margin:0;color:var(--loss);font-weight:600;font-size:14px}
+.auth-err.ok{color:var(--gain)}
+.auth-go{width:100%}
+.auth-form > .linkbtn{align-self:center}
+.auth-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.auth-fine{font-size:13px}
+.acct-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0}
+.acct-stats div{background:var(--surface-2);border-radius:12px;padding:10px 6px;display:flex;flex-direction:column}
+.acct-stats b{font-size:22px;font-family:var(--f-display)}
+.acct-stats span{font-size:12px;color:var(--muted)}
+.auth-card{--uc:var(--u2)}
+.auth-card > .btn{justify-content:center;text-align:center}

@@ -11,14 +11,16 @@ function confirmDialog({title,body,stay='Cancel',leave='Leave',onLeave}){
   document.body.append(sc); sc.querySelector('[data-a=stay]').focus();
 }
 /* ============================== ROUTER & BOOT ============================== */
-const PAGES=['lab','course','onboard','settings','library'];
+const PAGES=['lab','course','onboard','settings','library','login'];
 let BACK='home'; // last browsing page; lessons and desks return here
 function route(){ const v=decodeURIComponent(location.hash.slice(1)); return NODE[v]||PAGES.includes(v)||(v.startsWith('t:')&&findCardLesson(v.slice(2)))?v:'home'; }
 function findCardLesson(id){ for(const t of TRACKS){ const l=t.lessons.find(x=>x.id===id&&built(x)&&!x.ref); if(l) return [t,l]; } return null; }
 function render(){
   const v=route(); if(v==='home'||v==='course'||v==='lab'||v==='library'||v==='settings') BACK=v; const main=$('#main'); main.innerHTML=''; closeMentor(true); if(ROOM){ ROOM.dispose(); ROOM=null; }
-  document.body.classList.toggle('onboarding', v==='onboard'||(v==='home'&&!S.profile));
-  if(v==='home') S.profile ? renderMyPath(main) : renderOnboard(main);
+  document.body.classList.toggle('onboarding', v==='onboard'||v==='login'||(v==='home'&&!S.profile));
+  if(v==='login') renderLogin(main);
+  else if(v==='home'&&!S.profile&&!S.authSeen&&!Auth.user()) renderLogin(main, 'signup');
+  else if(v==='home') S.profile ? renderMyPath(main) : renderOnboard(main);
   else if(v==='onboard') renderOnboard(main);
   else if(v==='settings') S.profile ? renderSettings(main) : renderOnboard(main);
   else if(v==='course') renderPath(main);
@@ -43,4 +45,6 @@ S = load();
 const hotData = window.claude?.hot?.data; if(hotData && hotData.S) S = hotData.S;
 save();
 try{ window.claude?.hot?.snapshot?.(()=>({S})); }catch(e){}
-tape(); render();
+tape(); navAuth(); render();
+// Signed-in players: fetch the account copy of progress (another device may be ahead), then redraw.
+if(Auth.user()) Auth.pull().then(()=>render()).catch(()=>{});
